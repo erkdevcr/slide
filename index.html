@@ -1310,7 +1310,7 @@ function exportHtmlWithPaths(){
   const boot='<script id="ss-preset">window.__SS_PRESET='+JSON.stringify(P)+';window.__SS_PHOTO_PATHS='+JSON.stringify(P.photos.map(x=>x.path))+';<\/script>';
   if(src.includes('</body>'))src=src.replace('</body>',boot+'\n</body>');else src+=boot;
   downloadBlob(new Blob([src],{type:'text/html;charset=utf-8'}),(lastPresetName||'slideshow')+'.html');
-  alert('HTML exportado.\n\nColoca este HTML junto a la carpeta fotos/ (o vuelve a elegir la carpeta). Las fotos no van incrustadas.\n\nPara cache-bust / Service Worker: sirve la carpeta completa (slideshow.html + sw.js + version.json) por HTTP, no solo el HTML.');
+  alert('HTML exportado.\n\nColoca este HTML junto a la carpeta fotos/ (o vuelve a elegir la carpeta). Las fotos no van incrustadas.\n\nPara cache-bust / Service Worker: sirve la carpeta completa (slideshow.html o index.html en GitHub Pages + sw.js + version.json) por HTTP, no solo el HTML.');
 }
 $('exportHtmlBtn').onclick=exportHtmlWithPaths;
 async function decodeFromUrl(url,name){

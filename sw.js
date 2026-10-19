@@ -1,8 +1,15 @@
 /* Slideshow service worker — cache-bust via version.json
  * Sirve la carpeta por HTTP (p.ej. python -m http.server). No funciona en file://.
+ * GitHub Pages: index.html; local: slideshow.html. Precache resiliente (ignora 404).
  */
 const VERSION_URL = './version.json';
-const APP_SHELL = ['./slideshow.html', './version.json', './sw.js'];
+const APP_SHELL = [
+  './index.html',
+  './slideshow.html',
+  './',
+  './version.json',
+  './sw.js'
+];
 
 let currentVersion = null;
 
@@ -20,10 +27,21 @@ function cacheNameFor(v) {
   return 'slideshow-' + id;
 }
 
+/** Precache each URL individually so a missing file (e.g. slideshow.html on Pages) does not fail install. */
 async function precache(version) {
   const name = cacheNameFor(version);
   const cache = await caches.open(name);
-  await cache.addAll(APP_SHELL.map(u => new Request(u, { cache: 'reload' })));
+  await Promise.all(APP_SHELL.map(async (u) => {
+    try {
+      const req = new Request(u, { cache: 'reload' });
+      const res = await fetch(req);
+      if (res && res.ok) {
+        await cache.put(req, res);
+      }
+    } catch (e) {
+      console.warn('[sw] precache skip', u, e);
+    }
+  }));
   return name;
 }
 
@@ -66,6 +84,15 @@ function isNavOrHtml(req) {
   return url.pathname.endsWith('.html') || url.pathname.endsWith('/');
 }
 
+async function matchShellFallback(cache) {
+  const candidates = ['./index.html', './slideshow.html', './'];
+  for (const u of candidates) {
+    const hit = await cache.match(u);
+    if (hit) return hit;
+  }
+  return null;
+}
+
 async function networkFirst(req, cacheKeyHint) {
   const cache = await caches.open(cacheKeyHint || cacheNameFor(currentVersion) || 'slideshow-fallback');
   try {
@@ -77,8 +104,7 @@ async function networkFirst(req, cacheKeyHint) {
   } catch (e) {
     const hit = await cache.match(req);
     if (hit) return hit;
-    // try slideshow.html as SPA-ish fallback for navigations
-    const shell = await cache.match('./slideshow.html');
+    const shell = await matchShellFallback(cache);
     if (shell) return shell;
     throw e;
   }
