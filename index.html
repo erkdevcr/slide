@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Cache: preferir HTTP local (p.ej. python -m http.server en esta carpeta). En file:// el Service Worker no registra; version.json solo ayuda por HTTP. -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Slideshow de fotos</title>
 <style>
 html,body{margin:0;height:100%;background:#1b1a18;overflow:hidden;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#2b2622}
@@ -1306,7 +1310,7 @@ function exportHtmlWithPaths(){
   const boot='<script id="ss-preset">window.__SS_PRESET='+JSON.stringify(P)+';window.__SS_PHOTO_PATHS='+JSON.stringify(P.photos.map(x=>x.path))+';<\/script>';
   if(src.includes('</body>'))src=src.replace('</body>',boot+'\n</body>');else src+=boot;
   downloadBlob(new Blob([src],{type:'text/html;charset=utf-8'}),(lastPresetName||'slideshow')+'.html');
-  alert('HTML exportado.\n\nColoca este HTML junto a la carpeta fotos/ (o vuelve a elegir la carpeta). Las fotos no van incrustadas.');
+  alert('HTML exportado.\n\nColoca este HTML junto a la carpeta fotos/ (o vuelve a elegir la carpeta). Las fotos no van incrustadas.\n\nPara cache-bust / Service Worker: sirve la carpeta completa (slideshow.html + sw.js + version.json) por HTTP, no solo el HTML.');
 }
 $('exportHtmlBtn').onclick=exportHtmlWithPaths;
 async function decodeFromUrl(url,name){
@@ -1381,4 +1385,74 @@ function startExport(){
 }
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&exporting)console.warn('Pestaña oculta durante exportación: el video puede salir entrecortado.');});
 })();
-</script></body></html>
+</script><script id="ss-version-boot">
+/* Cache-bust: version.json + Service Worker (solo http/https; no file://) */
+(function(){
+  var LS_KEY='ssAppVersion';
+  var RELOAD_KEY='ssVersionReload';
+  var isHttp = location.protocol==='http:'||location.protocol==='https:';
+  function verId(v){return v&&(String(v.version||'')+'-b'+String(v.build||0));}
+  function hardReloadOnce(){
+    try{
+      if(sessionStorage.getItem(RELOAD_KEY)==='1'){sessionStorage.removeItem(RELOAD_KEY);return false;}
+      sessionStorage.setItem(RELOAD_KEY,'1');
+    }catch(e){}
+    location.reload();
+    return true;
+  }
+  async function checkVersion(){
+    if(!isHttp){
+      try{console.info('[slideshow] Abre por HTTP (p.ej. python -m http.server en la carpeta) para forzar la versión más reciente. En file:// no hay Service Worker ni fetch de version.json.');}catch(e){}
+      return;
+    }
+    try{
+      var res=await fetch('./version.json?t='+Date.now(),{cache:'no-store',credentials:'same-origin'});
+      if(!res.ok)return;
+      var v=await res.json();
+      var id=verId(v);
+      if(!id)return;
+      var prev=null;
+      try{prev=localStorage.getItem(LS_KEY);}catch(e){}
+      if(prev && prev!==id){
+        try{localStorage.setItem(LS_KEY,id);}catch(e){}
+        hardReloadOnce();
+        return;
+      }
+      try{localStorage.setItem(LS_KEY,id);}catch(e){}
+      try{sessionStorage.removeItem(RELOAD_KEY);}catch(e){}
+    }catch(e){console.warn('[slideshow] version.json',e);}
+  }
+  function registerSW(){
+    if(!isHttp||!('serviceWorker' in navigator))return;
+    var swUrl='./sw.js';
+    navigator.serviceWorker.register(swUrl).then(function(reg){
+      function askSkip(w){if(w)w.postMessage({type:'SKIP_WAITING'});}
+      if(reg.waiting)askSkip(reg.waiting);
+      reg.addEventListener('updatefound',function(){
+        var nw=reg.installing;
+        if(!nw)return;
+        nw.addEventListener('statechange',function(){
+          if(nw.state==='installed'&&navigator.serviceWorker.controller)askSkip(nw);
+        });
+      });
+      setInterval(function(){try{reg.update();}catch(e){}},5*60*1000);
+    }).catch(function(e){console.warn('[slideshow] SW',e);});
+    var refreshing=false;
+    navigator.serviceWorker.addEventListener('controllerchange',function(){
+      if(refreshing)return;refreshing=true;hardReloadOnce();
+    });
+    navigator.serviceWorker.addEventListener('message',function(ev){
+      var d=ev.data||{};
+      if(d.type==='NEW_VERSION'){
+        try{if(d.version)localStorage.setItem(LS_KEY,verId(d.version));}catch(e){}
+        hardReloadOnce();
+      }
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){checkVersion();registerSW();});
+  else{checkVersion();registerSW();}
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)checkVersion();});
+  window.addEventListener('focus',function(){checkVersion();});
+})();
+</script>
+</body></html>
