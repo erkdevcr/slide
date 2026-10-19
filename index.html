@@ -17,7 +17,7 @@ body.mode-float :is(.m-float,.m-film,.m-table,.m-album):not(.m-float),body.mode-
 #fxPanel{display:none;position:absolute;bottom:calc(100% + 14px);left:50%;transform:translateX(-50%);background:rgba(255,255,255,.97);padding:12px 14px;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.25);min-width:300px}
 #fxPanel.open{display:block}
 #addDirInput,#addFilesInput{display:none}
-#addMenu{display:none;gap:6px;margin:6px 0}#addMenu button{flex:1}#addMenu.open{display:flex}
+#addStack{display:flex;flex-direction:column;gap:10px;margin:4px 0 2px}#addStack .addOpt{display:flex;flex-direction:column;gap:4px}#addStack .addOpt button{width:100%}#addStack .hint{font-size:11px;line-height:1.35;color:#a9a39a;min-height:0}
 #phPanel{display:none;position:fixed;left:316px;top:40px;width:min(640px,calc(100vw - 340px));max-height:calc(100vh - 80px);overflow:auto;z-index:60;background:rgba(24,24,26,.96);color:#ece8e1;border:1px solid rgba(255,255,255,.08);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.5);padding:12px 14px;font:13px system-ui,sans-serif}
 #phPanel.open{display:block}
 #phPanel .hd{display:flex;gap:8px;align-items:center;margin-bottom:10px}#phPanel .hd b{flex:1}
@@ -26,12 +26,45 @@ body.mode-float :is(.m-float,.m-film,.m-table,.m-album):not(.m-float),body.mode-
 #phGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
 #phGrid .th{position:relative;background:#111;border-radius:8px;overflow:hidden;border:2px solid #808080}
 #phGrid .th.off{border-color:#3a3a3a}#phGrid .th.off img{opacity:.3;filter:grayscale(1)}
+#phGrid .th.sel{border-color:#e08c34;box-shadow:inset 0 0 0 2px rgba(224,140,52,.45)}
+#phGrid .th.sel::after{content:"";position:absolute;inset:0;background:rgba(224,140,52,.18);pointer-events:none}
+#phSelBar{display:none;align-items:center;gap:8px;margin:0 0 8px;flex-wrap:wrap}
+#phSelBar.show{display:flex}
+#phSelBar .muted{flex:1;min-width:80px}
+#phSelDel{background:#8a2c2c!important;border-color:#a33!important;color:#fff!important}
+#sortModal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:80;padding:24px}
+#sortModal.open{display:flex}
+#sortModal .sortCard{background:#1a1a1c;color:#ece8e1;border:1px solid rgba(255,255,255,.1);border-radius:14px;box-shadow:0 16px 48px rgba(0,0,0,.55);width:min(1100px,96vw);max-height:min(92vh,900px);display:flex;flex-direction:column;overflow:hidden}
+#sortModal .sortHd{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+#sortModal .sortHd h2{margin:0;font-size:18px;font-weight:600;flex:1;min-width:140px}
+#sortModal .sortHd .muted{font-size:13px;color:#aaa;width:100%;margin:0}
+#sortModal .sortZoom{display:flex;gap:6px;align-items:center}
+#sortModal .sortZoom button{min-width:40px}
+#sortModal .sortBody{flex:1;overflow:auto;padding:14px 18px;min-height:200px}
+#sortGrid{display:grid;grid-template-columns:repeat(var(--sortCols,4),minmax(0,1fr));gap:10px}
+#sortGrid .sth{position:relative;background:#111;border-radius:10px;overflow:hidden;border:2px solid #555;cursor:grab;user-select:none;aspect-ratio:1;touch-action:none}
+#sortGrid .sth:active{cursor:grabbing}
+#sortGrid .sth.drag{opacity:.45;border-color:#e08c34}
+#sortGrid .sth.over{border-color:#e08c34;box-shadow:inset 0 0 0 2px rgba(224,140,52,.5)}
+#sortGrid .sth img{width:100%;height:100%;object-fit:cover;pointer-events:none;display:block}
+#sortGrid .sth .nm{position:absolute;left:0;right:0;bottom:0;padding:4px 6px;font-size:11px;background:linear-gradient(transparent,rgba(0,0,0,.85));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+#sortGrid .sth .ord{position:absolute;top:6px;left:6px;background:rgba(0,0,0,.7);border-radius:6px;padding:2px 6px;font-size:12px;font-weight:600;pointer-events:none}
+#sortModal .sortFt{display:flex;justify-content:flex-end;gap:10px;padding:12px 18px;border-top:1px solid rgba(255,255,255,.08)}
+#sortModal .sortFt .primary{background:#e08c34;border-color:#c4782a;color:#111;font-weight:600}
+#sortBtn{background:#2a2a2e}
+
 #phGrid img{display:block;width:100%;height:90px;object-fit:cover;cursor:pointer}
 #phGrid input{position:absolute;left:6px;top:6px;accent-color:#e08c34;width:16px;height:16px}
 #phGrid .rm{position:absolute;right:4px;top:4px;padding:3px 4px;line-height:0;background:rgba(0,0,0,.6)}
 #phGrid .nm{font-size:11px;padding:3px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#bbb}
 #phWarn{color:#f0a060;min-height:16px;margin-top:8px}
 button.icon{display:inline-flex;align-items:center;justify-content:center;padding:7px 9px;min-height:34px}
+svg.ic{display:inline-block;vertical-align:-0.2em;flex-shrink:0}
+button:has(>svg.ic),label.btn:has(>svg.ic),.btn:has(>svg.ic){gap:6px;align-items:center}
+#panelTab{display:inline-flex;align-items:center;justify-content:center;line-height:1}
+#panelFold{display:inline-flex}
+.warn svg.ic{margin-right:6px;vertical-align:-0.25em;color:#e0a020}
+
 button.icon:disabled{opacity:.4}
 #fxPanel label{display:grid!important;white-space:nowrap;grid-template-columns:140px minmax(0,1fr) 5.5ch;gap:8px;margin:6px 0}
 #fxPanel input{width:auto!important}
@@ -41,25 +74,26 @@ button.icon:disabled{opacity:.4}
 #bar input[type=range]{width:110px}
 #doneBox{display:none}#modal .card.done>*{display:none!important}#modal .card.done>#doneBox{display:block!important}
 #modal button.ok{background:#2f9e55!important;border-color:#2f9e55!important;color:#fff!important;font-weight:600;padding:8px 18px}#modal button.ok:hover{background:#38b462!important}
-#modal,#ovModal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:20}
-#modal .card,#ovModal .card{text-align:left;min-width:380px}
+#modal,#ovModal,#matchModal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:20}
+#modal .card,#ovModal .card,#matchModal .card{text-align:left;min-width:380px}
+#matchModal{display:none;align-items:center;justify-content:center;z-index:21;inset:0;background:rgba(0,0,0,.45)}
 .row{display:flex;justify-content:space-between;align-items:center;margin:10px 0;gap:12px}
 .warn{background:#fff4d6;border:1px solid #e8cf7a;padding:8px 10px;border-radius:8px;font-size:13px;color:#6b5310}
 progress{width:100%;height:14px}
 .muted{color:#6b6157;font-size:13px}
 input[type=file]{display:none}
 /* ---- tema oscuro: barra, panel de efectos y modal ---- */
-#bar,#fxPanel,#modal .card,#ovModal .card{background:rgba(24,24,26,.88);color:#ece8e1;border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 30px rgba(0,0,0,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#bar,#fxPanel,#modal .card,#ovModal .card,#matchModal .card{background:rgba(24,24,26,.88);color:#ece8e1;border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 30px rgba(0,0,0,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 #fxPanel{background:rgba(24,24,26,.95)}
-#bar label,#fxPanel label,#modal .muted,#bar .muted,#ovModal .muted{color:#c9c3b9}
-#bar button,#bar .btn,#bar select,#fxPanel button,#modal button,#modal select,#modal input[type=number],#ovModal button,#ovModal select,#ovModal input[type=number]{background:#2e2e32;color:#f2eee8;border:1px solid #4a4a50}
-#bar button:hover,#bar .btn:hover,#fxPanel button:hover,#modal button:hover,#ovModal button:hover{background:#3a3a40}
-#bar button.primary,#modal button.primary,#ovModal button.primary{background:#e08c34;border-color:#e08c34;color:#1b1206;font-weight:600}
-#bar button.primary:hover,#modal button.primary:hover,#ovModal button.primary:hover{background:#f09c44}
+#bar label,#fxPanel label,#modal .muted,#bar .muted,#ovModal .muted,#matchModal .muted{color:#c9c3b9}
+#bar button,#bar .btn,#bar select,#fxPanel button,#modal button,#modal select,#modal input[type=number],#ovModal button,#ovModal select,#ovModal input[type=number],#matchModal button{background:#2e2e32;color:#f2eee8;border:1px solid #4a4a50}
+#bar button:hover,#bar .btn:hover,#fxPanel button:hover,#modal button:hover,#ovModal button:hover,#matchModal button:hover{background:#3a3a40}
+#bar button.primary,#modal button.primary,#ovModal button.primary,#matchModal button.primary{background:#e08c34;border-color:#e08c34;color:#1b1206;font-weight:600}
+#bar button.primary:hover,#modal button.primary:hover,#ovModal button.primary:hover,#matchModal button.primary:hover{background:#f09c44}
 #bar input[type=number]{background:#2e2e32;color:#f2eee8;border:1px solid #4a4a50;padding:5px 6px}
 #bar input[type=color]{width:34px;height:26px;padding:0 2px;border:1px solid #4a4a50;border-radius:6px;background:#2e2e32;cursor:pointer}
 #bar input[type=range],#fxPanel input[type=range],#bar input[type=checkbox]{accent-color:#e08c34}
-#modal .warn,#ovModal .warn{background:rgba(224,140,52,.12);border-color:rgba(224,140,52,.45);color:#f3d7b2}
+#modal .warn,#ovModal .warn,#matchModal .warn{background:rgba(224,140,52,.12);border-color:rgba(224,140,52,.45);color:#f3d7b2}
 #modal progress,#ovModal progress{accent-color:#e08c34}
 #modal b,#ovModal b{color:#fff}
 
@@ -176,7 +210,7 @@ body.panel-open #panelTab{opacity:0;pointer-events:none}
 <div id="start"><div class="card">
   <h1>Slideshow de fotos</h1>
   <p>Elige la carpeta con tus fotos. Se usarán todas las imágenes (JPG, PNG, WEBP, GIF, AVIF) ordenadas por nombre.</p>
-  <label class="btn primary" for="dirInput">📁 Elegir carpeta</label>
+  <button type="button" class="btn primary" id="startFolderBtn"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> Elegir carpeta</button>
   <div id="loadMsg" class="muted" style="margin-top:14px"></div>
 </div></div>
 <input type="file" id="bgInput" accept="image/*">
@@ -186,18 +220,22 @@ body.panel-open #panelTab{opacity:0;pointer-events:none}
 <input type="file" id="addDirInput" webkitdirectory directory multiple accept="image/*">
 <input type="file" id="addFilesInput" multiple accept="image/*">
 
-<button id="panelTab" title="Mostrar/ocultar controles" aria-label="Mostrar u ocultar controles">☰</button>
+<button id="panelTab" title="Mostrar/ocultar controles" aria-label="Mostrar u ocultar controles"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 <div id="bar" class="hide">
-  <div class="phead"><b>Controles</b><button id="panelFold" class="icon" title="Plegar panel" aria-label="Plegar panel">«</button></div>
+  <div class="phead"><b>Controles</b><button id="panelFold" class="icon" title="Plegar panel" aria-label="Plegar panel"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button></div>
   <div class="transport" role="group" aria-label="Reproducción"><button id="playOn" title="Reproducir (Espacio)" aria-label="Reproducir"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg> Play</button><button id="playOff" title="Pausar (Espacio)" aria-label="Pausar"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg> Pausa</button><span id="playBtn" hidden></span></div>
   <div class="tabs" role="tablist"><button class="tab" role="tab" data-tab="fotos">Fotos</button><button class="tab" role="tab" data-tab="slideshow">Slideshow</button></div>
   <div class="tabpane" data-pane="fotos">
   <section><h3>Fotos</h3>
-    <div class="row2 eq"><label class="btn" for="dirInput" title="Reemplazar con otra carpeta">📁 Carpeta</label><button id="addBtn" title="Agregar fotos al conjunto actual">➕ Agregar</button></div><span id="phBtn" hidden></span>
-    <div id="addMenu"><button id="addFilesBtn">Archivos…</button><button id="addDirBtn">Carpeta…</button></div>
+    <div id="addStack" class="addStack">
+      <div class="addOpt"><button id="addFilesBtn" class="btn" title="Elegir fotos sueltas"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg> Agregar archivos</button><span class="hint">Suma fotos sueltas al conjunto actual (no reemplaza).</span></div>
+      <div class="addOpt"><button id="addDirBtn" class="btn" title="Elegir otra carpeta para sumar"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> Agregar carpetas</button><span class="hint">Suma todas las imágenes de otra carpeta, sin quitar las que ya hay.</span></div>
+      <div class="addOpt"><button id="refreshBtn" disabled title="Recarga las fotos desde la carpeta (reelegir si hace falta). No borra ajustes ni presets."><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg> Actualizar</button><span id="refreshHint" class="hint"></span></div>
+    </div>
+    <span id="phBtn" hidden></span>
     <span id="count" class="muted"></span>
   </section>
-  <section id="phSec"><div id="phPanel" class="open" aria-label="Lista de fotos"><div class="hd"><span id="phCount"></span><button id="phAll">Todas</button><button id="phNone">Ninguna</button><span class="zoom"><button id="phLess" title="Miniaturas más grandes" aria-label="Miniaturas más grandes">+</button><button id="phMore" title="Miniaturas más pequeñas" aria-label="Miniaturas más pequeñas">−</button></span></div><div id="phConfirm" role="alertdialog"><span>¿Quitar esta foto de la galería?</span><b id="phConfName"></b><div><button id="phConfCancel">Cancelar</button><button id="phConfOk" class="danger">Quitar</button></div></div><div id="phGrid"></div><div id="phWarn"></div></div></section>
+  <section id="phSec"><div id="phPanel" class="open" aria-label="Lista de fotos"><div class="hd"><span id="phCount"></span><button id="phAll">Todas</button><button id="phNone">Ninguna</button><button type="button" id="sortBtn" class="m-album m-film" title="Reordenar fotos del álbum y del film">Ordenar fotos</button><span class="zoom"><button id="phLess" title="Miniaturas más grandes" aria-label="Miniaturas más grandes">+</button><button id="phMore" title="Miniaturas más pequeñas" aria-label="Miniaturas más pequeñas">−</button></span></div><div id="phSelBar"><span id="phSelCount" class="muted">0 seleccionadas</span><button id="phSelClear">Quitar selección</button><button id="phSelDel">Borrar seleccionadas</button></div><div id="phConfirm" role="alertdialog"><span id="phConfMsg">¿Quitar esta foto de la galería?</span><b id="phConfName"></b><div><button id="phConfCancel">Cancelar</button><button id="phConfOk" class="danger">Quitar</button></div></div><div id="phGrid"></div><div id="phWarn"></div></div></section>
   </div><div class="tabpane" data-pane="slideshow">
   <section><h3>Animación</h3>
     <label class="modeSel">Animación <select id="mode"><option value="float">Fotos flotantes</option><option value="film">Film de película</option><option value="table">Mesa de fotos</option><option value="album">Álbum</option></select></label>
@@ -208,7 +246,7 @@ body.panel-open #panelTab{opacity:0;pointer-events:none}
     <label class="m-album">Duración del giro <input type="range" id="albFlip" min="0.5" max="4" step="0.1" value="1.4"><span id="albFlipV">1.4 s</span></label>
     <label class="m-album">Fotos por página <select id="albPer"><option value="1">1</option><option value="2">2</option><option value="mix" selected>Mixto</option></select></label>
     <label class="m-album">Color de página <select id="albColor"><option value="cream">Crema</option><option value="black">Negro clásico</option><option value="kraft">Kraft</option><option value="custom">Personalizado</option></select> <input type="color" id="albCustomC" value="#f2e8d2" title="Color personalizado de la hoja" style="display:none"></label>
-    <label class="btn m-album" for="albPageInput" title="Cargar una imagen para las hojas (se estira a la página completa)">🖼 Hoja</label>
+    <label class="btn m-album" for="albPageInput" title="Cargar una imagen para las hojas (se estira a la página completa)"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.5" fill="currentColor" stroke="none"/><path d="M3 16l5-4 4 3 3-2 6 4"/></svg> Hoja</label>
     <button class="m-album icon" id="albPageOff" title="Quitar hoja" aria-label="Quitar hoja" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg></button>
     <label class="m-album chk"><input type="checkbox" id="albCorners" checked> Esquinas</label>
     <label class="m-album" title="Color de las esquinas">Color esquinas <input type="color" id="albCornerC" value="#c1b082"></label>
@@ -231,13 +269,13 @@ body.panel-open #panelTab{opacity:0;pointer-events:none}
     <div class="row2"><label>Efecto <select id="effect"><option value="none">Ninguno</option><option value="glitch" selected>Glitch</option></select></label><button id="fxBtn" class="icon" aria-label="Editar efecto" title="Editar efecto"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><div id="fxPanel"><label>Grano<input type="range" class="fx" data-k="grain" min="0" max="100" step="1" value="48"><span>48%</span></label><label>Sepia<input type="range" class="fx" data-k="sepia" min="0" max="100" step="1" value="30"><span>30%</span></label><label>Viñeta<input type="range" class="fx" data-k="vig" min="0" max="100" step="1" value="50"><span>50%</span></label><label>Parpadeo<input type="range" class="fx" data-k="flick" min="0" max="100" step="1" value="30"><span>30%</span></label><label>Rasguños<input type="range" class="fx" data-k="scratch" min="0" max="100" step="1" value="30"><span>30%</span></label><label>Polvo<input type="range" class="fx" data-k="dust" min="0" max="100" step="1" value="30"><span>30%</span></label><label>Salto de cuadro<input type="range" class="fx" data-k="jitter" min="0" max="100" step="1" value="0"><span>0%</span></label><label>Fantasma de color<input type="range" class="fx" data-k="ghost" min="0" max="100" step="1" value="0"><span>0%</span></label><div class="fxrow"><button id="fxZero">Todo a 0</button><button id="fxReset">Por defecto</button></div></div></div>
   </section>
   <section><h3>Marco superior</h3>
-    <div class="row2"><button id="ovBtn" class="btn" style="font-size:13px" title="Imagen con transparencia encima del slideshow">🖼 Marco superior</button><button id="ovOff" class="icon" title="Quitar marco superior" aria-label="Quitar marco superior" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg></button><button class="icon adjBtn" data-for="adjOv" aria-label="Ajustar marco superior" title="Ajustar marco superior" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
+    <div class="row2"><button id="ovBtn" class="btn" style="font-size:13px" title="Imagen con transparencia encima del slideshow"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.5" fill="currentColor" stroke="none"/><path d="M3 16l5-4 4 3 3-2 6 4"/></svg> Marco superior</button><button id="ovOff" class="icon" title="Quitar marco superior" aria-label="Quitar marco superior" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg></button><button class="icon adjBtn" data-for="adjOv" aria-label="Ajustar marco superior" title="Ajustar marco superior" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
     <div class="adjp" id="adjOv" data-layer="Ov"><label title="Hue">Tono<input type="range" data-k="h" min="-180" max="180" step="1" value="0"><span>0°</span></label><label title="Saturation">Saturación<input type="range" data-k="s" min="0" max="200" step="1" value="100"><span>100%</span></label><label title="White balance / temperature (− frío, + cálido)">Balance de blancos<input type="range" data-k="t" min="-100" max="100" step="1" value="0"><span>0</span></label><label title="Exposure (EV)">Exposición<input type="range" data-k="e" min="-2" max="2" step="0.1" value="0"><span>0 EV</span></label><label title="Opacity">Opacidad<input type="range" data-k="o" min="0" max="100" step="1" value="100"><span>100%</span></label><label title="Blend mode">Modo de fusión<select data-k="b"><option value="normal">Normal</option><option value="multiply">Multiplicar</option><option value="overlay">Superponer</option></select></label><div class="adjbtns"><button class="adjReset">Restablecer</button></div></div>
     <span id="ovName" class="muted" style="display:block;margin-top:6px"></span>
   </section>
   <section><h3>Fondo</h3>
     <label title="Background color: se ve sin imagen o con la imagen transparente">Color de fondo <input type="color" id="bgColor" value="#ece4d4"></label>
-    <div class="row2"><label class="btn" for="bgInput" title="Cambiar imagen de fondo">🖼 Imagen de fondo</label><button id="bgOff" class="icon" title="Quitar fondo" aria-label="Quitar fondo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg></button><button class="icon adjBtn" data-for="adjBg" aria-label="Ajustar fondo" title="Ajustar fondo" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
+    <div class="row2"><label class="btn" for="bgInput" title="Cambiar imagen de fondo"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.5" fill="currentColor" stroke="none"/><path d="M3 16l5-4 4 3 3-2 6 4"/></svg> Imagen de fondo</label><button id="bgOff" class="icon" title="Quitar fondo" aria-label="Quitar fondo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg></button><button class="icon adjBtn" data-for="adjBg" aria-label="Ajustar fondo" title="Ajustar fondo" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
     <div class="adjp" id="adjBg" data-layer="Bg"><label title="Hue">Tono<input type="range" data-k="h" min="-180" max="180" step="1" value="0"><span>0°</span></label><label title="Saturation">Saturación<input type="range" data-k="s" min="0" max="200" step="1" value="100"><span>100%</span></label><label title="White balance / temperature (− frío, + cálido)">Balance de blancos<input type="range" data-k="t" min="-100" max="100" step="1" value="0"><span>0</span></label><label title="Exposure (EV)">Exposición<input type="range" data-k="e" min="-2" max="2" step="0.1" value="0"><span>0 EV</span></label><label title="Opacity">Opacidad<input type="range" data-k="o" min="0" max="100" step="1" value="100"><span>100%</span></label><label title="Blend mode">Modo de fusión<select data-k="b"><option value="normal">Normal</option><option value="multiply">Multiplicar</option><option value="overlay">Superponer</option></select></label><div class="adjbtns"><button class="adjReset">Restablecer</button></div></div>
   </section>
   <section><h3>Cuadro</h3>
@@ -245,12 +283,48 @@ body.panel-open #panelTab{opacity:0;pointer-events:none}
     <select id="frameFmt" class="full"><option value="1920x1080">16:9 — 1920×1080</option><option value="1080x1920">9:16 — 1080×1920</option><option value="1080x1080">1:1 — 1080×1080</option><option value="1080x1350">4:5 — 1080×1350</option><option value="1440x1080">4:3 — 1440×1080</option><option value="custom">Personalizado</option></select>
     <div id="frameCustom" class="row2" style="display:none"><label>An <input type="number" id="frameW" min="320" max="3840" step="2" value="1920" style="width:72px"></label><label>Al <input type="number" id="frameH" min="320" max="3840" step="2" value="1080" style="width:72px"></label></div>
   </section>
+  <section><h3>Proyecto</h3>
+    <div class="row2 eq"><button id="savePresetBtn" title="Descarga un JSON con todos los ajustes (sin fotos)"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h11l3 3v15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M7 3v5h8V3"/><path d="M7 19h10v-6H7z"/></svg> Guardar preset</button><button id="openPresetBtn" title="Aplica un JSON de ajustes al proyecto actual (no necesita las mismas fotos)"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><path d="M6.5 6.5l2.5 2.5M15 15l2.5 2.5M17.5 6.5 15 9M9 15l-2.5 2.5"/><circle cx="12" cy="12" r="2.5"/></svg> Aplicar preset</button></div>
+    <button id="exportHtmlBtn" style="width:100%;margin-top:8px" title="HTML + rutas relativas a fotos/"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg> Exportar HTML con rutas</button>
+    <span id="projName" class="muted" style="display:block;margin-top:6px"></span>
+    <input type="file" id="presetInput" accept="application/json,.json" style="display:none">
+    <input type="file" id="matchDirInput" webkitdirectory directory multiple accept="image/*" style="display:none">
+    <input type="file" id="matchFilesInput" multiple accept="image/*" style="display:none">
+  </section>
   <section><h3>Exportar</h3>
-    <button id="exportBtn" class="primary">🎬 Exportar video</button>
+    <button id="exportBtn" class="primary"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18v14H3z"/><path d="M7 5v14M17 5v14M3 9h4M3 15h4M17 9h4M17 15h4M9 8h6v8H9z"/></svg> Exportar video</button>
   </section>
   </div>
 </div>
 
+<div id="sortModal" role="dialog" aria-modal="true" aria-label="Ordenar fotos">
+  <div class="sortCard">
+    <div class="sortHd">
+      <h2>Ordenar fotos</h2>
+      <div class="sortZoom">
+        <button type="button" id="sortZoomIn" title="Miniaturas más grandes" aria-label="Miniaturas más grandes"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>+</button>
+        <button type="button" id="sortZoomOut" title="Miniaturas más pequeñas" aria-label="Miniaturas más pequeñas"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>−</button>
+      </div>
+      <p class="muted">Arrastra las miniaturas para cambiar el orden. Este orden se usa en Álbum y Film.</p>
+    </div>
+    <div class="sortBody"><div id="sortGrid"></div></div>
+    <div class="sortFt">
+      <button type="button" id="sortCancel">Cancelar</button>
+      <button type="button" id="sortApply" class="primary">Aplicar</button>
+    </div>
+  </div>
+</div>
+<div id="matchModal" role="dialog" aria-label="Fotos del proyecto"><div class="card">
+  <h2 style="margin-top:0">Fotos del proyecto</h2>
+  <p class="muted" style="line-height:1.45;margin:0 0 10px">El preset no incluye las fotos. Elige la carpeta (o los archivos) que las contiene; se emparejan por nombre.</p>
+  <div id="matchList" class="muted" style="max-height:160px;overflow:auto;font-size:12px;margin-bottom:10px;white-space:pre-wrap"></div>
+  <div id="matchWarn" class="warn" style="display:none;margin-bottom:10px"></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+    <button id="matchSkip">Continuar sin fotos</button>
+    <button id="matchFiles">Archivos…</button>
+    <button id="matchDir" class="primary">Elegir carpeta</button>
+  </div>
+</div></div>
 <div id="ovModal" role="dialog" aria-label="Marco superior"><div class="card">
   <h2 style="margin:0 0 8px;font-size:18px">Marco superior</h2>
   <p class="muted" style="margin:0 0 14px;line-height:1.45">La imagen debe tener transparencia (PNG recomendado). Las zonas transparentes dejan ver el slideshow debajo.</p>
@@ -264,7 +338,7 @@ body.panel-open #panelTab{opacity:0;pointer-events:none}
   <div class="row"><span>Cuadros por segundo</span><select id="fps"><option>30</option><option>60</option></select></div>
   <div class="row"><span>Duración total</span><b id="totalDur"></b></div>
   <div class="row"><span>Formato</span><span id="fmt" class="muted"></span></div>
-  <div class="warn">⚠️ Deja esta pestaña <b>visible y en primer plano</b> durante la exportación: los navegadores frenan las pestañas en segundo plano y el video saldría entrecortado. La grabación dura lo mismo que el video.</div>
+  <div class="warn"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4M12 17h.01"/></svg> Deja esta pestaña <b>visible y en primer plano</b> durante la exportación: los navegadores frenan las pestañas en segundo plano y el video saldría entrecortado. La grabación dura lo mismo que el video.</div>
   <div id="prog" style="display:none;margin-top:12px"><progress id="pbar" max="1" value="0"></progress><div id="ptext" class="muted"></div></div>
   <div class="row" style="justify-content:flex-end;margin-top:16px">
     <button id="cancelBtn">Cancelar</button><button id="goBtn" class="primary">Grabar</button>
@@ -339,8 +413,110 @@ function dispSize(w,h){const MAXW=W*0.50,MAXH=H*0.62,s=Math.min(MAXW/w,MAXH/h);r
 
 // ---------- carga ----------
 const EXT=/\.(jpe?g|png|webp|gif|avif|bmp)$/i;
-let library=[];const libKey=f=>f.name+'|'+f.size;
+let library=[],photosDirHandle=null,refreshPick=false;
+const libKey=f=>f.name+'|'+(f.size||0)+'|'+(f.lastModified||0);
+function setRefreshUi(){
+  const ok=library.length>0;$('refreshBtn').disabled=!ok;
+  $('refreshHint').textContent=ok?(photosDirHandle?'Vuelve a leer la carpeta (o elige otra). Los ajustes del panel se conservan.':'Elige de nuevo la carpeta; se recargan las fotos y se conservan los ajustes del panel.'):'';
+}
+async function filesFromDirHandle(dir){
+  const files=[];
+  for await(const [name,h] of dir.entries()){
+    if(h.kind!=='file')continue;
+    if(!EXT.test(name)||name.startsWith('.'))continue;
+    try{files.push(await h.getFile());}catch(e){console.warn(e);}
+  }
+  files.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'}));
+  return files;
+}
+async function pickPhotosFolder(append){
+  if(window.showDirectoryPicker){
+    try{
+      const dir=await showDirectoryPicker();
+      const files=await filesFromDirHandle(dir);
+      if(!append){photosDirHandle=dir;setRefreshUi();
+        if(library.length)await loadFilesKeepSettings(files); else await loadFiles(files,false);
+      }else{if(!photosDirHandle)photosDirHandle=dir;setRefreshUi();await loadFiles(files,true);}
+      return;
+    }catch(e){if(e&&e.name==='AbortError')return;console.warn(e);}
+  }
+  // Safari / sin File System Access: input de carpeta (no se puede reescanear después)
+  if(!append){photosDirHandle=null;setRefreshUi();$('dirInput').click();}
+  else $('addDirInput').click();
+}
+async function refreshPhotosFolder(){
+  // OK reelegir carpeta y sustituir la lista; lo importante: no tocar ajustes/presets del panel
+  if(photosDirHandle){
+    try{
+      if(photosDirHandle.requestPermission){
+        const p=await photosDirHandle.requestPermission({mode:'read'});
+        if(p==='denied'){flashWarn('Sin permiso para leer la carpeta.');return;}
+      }
+      const files=await filesFromDirHandle(photosDirHandle);
+      await loadFilesKeepSettings(files);
+      flashWarn('Fotos actualizadas ('+library.length+'). Ajustes conservados.');
+      return;
+    }catch(e){console.warn(e);photosDirHandle=null;}
+  }
+  // Sin handle (p.ej. input clásico): pedir carpeta otra vez
+  flashWarn('Elige la carpeta de nuevo para actualizar las fotos. Los ajustes se mantienen.');
+  refreshPick=true;await pickPhotosFolder(false);
+}
+async function syncLibraryFromFiles(files){
+  files=[...files].filter(f=>EXT.test(f.name)||/^image\//.test(f.type)).filter(f=>!f.name.startsWith('.'));
+  files.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'}));
+  if(!files.length){flashWarn('La carpeta ya no tiene imágenes.');return;}
+  const byName=new Map(files.map(f=>[f.name,f]));
+  const used=new Set();
+  const next=[];
+  const leftoverOld=[];
+  // 1) mismo nombre
+  for(const e of library){
+    const f=byName.get(e.p.name);
+    if(f){used.add(f.name);next.push(await reuseOrReload(e,f));}
+    else leftoverOld.push(e);
+  }
+  // 2) renombres: size+lastModified únicos
+  const leftoverNew=[...files].filter(f=>!used.has(f.name));
+  const sig=f=>(f.size||0)+'|'+ (f.lastModified||0);
+  const newBySig=new Map();
+  for(const f of leftoverNew){const k=sig(f);if(newBySig.has(k))newBySig.set(k,null);else newBySig.set(k,f);}
+  const stillOld=[];
+  for(const e of leftoverOld){
+    const f=e.file?newBySig.get(sig(e.file)):null;
+    if(f){used.add(f.name);newBySig.set(sig(f),null);next.push(await reuseOrReload(e,f));}
+    else stillOld.push(e);
+  }
+  // 3) opcionales: hash corto si size coincide y hay un solo candidato
+  const unused=leftoverNew.filter(f=>!used.has(f.name));
+  const bySize=new Map();
+  for(const f of unused){const k=f.size||0;(bySize.get(k)||bySize.set(k,[]).get(k)).push(f);}
+  for(const e of stillOld){
+    const cands=bySize.get(e.file&&e.file.size||0)||[];
+    if(cands.length===1){const f=cands[0];used.add(f.name);bySize.set(f.size,[]);next.push(await reuseOrReload(e,f));}
+    else {e.p.img.close&&e.p.img.close();} // desapareció
+  }
+  // 4) archivos nuevos
+  let added=0,kept=next.length;
+  for(const f of files){
+    if(used.has(f.name))continue;
+    try{const p=await decode(f);next.push({key:libKey(f),file:f,p,on:true,thumb:thumbOf(p)});added++;used.add(f.name);}catch(err){console.warn(err);}
+  }
+  if(!next.length){flashWarn('No quedó ninguna foto tras actualizar.');return;}
+  // preservar al menos una activa
+  if(!next.some(e=>e.on))next[0].on=true;
+  library=next;rebuildActive();renderPh(); // no resetea sceneT ni presets
+  flashWarn('Actualizado: '+library.length+' fotos ('+added+' nuevas).');
+}
+async function reuseOrReload(e,f){
+  const same=e.file&&e.file.size===f.size&&e.file.lastModified===f.lastModified&&e.p.name===f.name;
+  if(same){e.file=f;e.key=libKey(f);return e;} // toque el handle fresco
+  // cambió contenido o nombre: recodificar, conservar .on
+  try{const p=await decode(f);e.p.img.close&&e.p.img.close();return{key:libKey(f),file:f,p,on:e.on,thumb:thumbOf(p)};}
+  catch(err){console.warn(err);return e;}
+}
 async function loadFiles(files,append){
+  if(!append)clearPhSelection();
   files=[...files].filter(f=>EXT.test(f.name)||/^image\//.test(f.type)).filter(f=>!f.name.startsWith('.'));
   files.sort((a,b)=>(a.webkitRelativePath||a.name).localeCompare(b.webkitRelativePath||b.name,undefined,{numeric:true,sensitivity:'base'}));
   if(append){const have=new Set(library.map(e=>e.key));files=files.filter(f=>{const k=libKey(f);if(have.has(k))return false;have.add(k);return true;});if(!files.length){flashWarn('Esas fotos ya estaban en la lista.');return;}}
@@ -351,31 +527,139 @@ async function loadFiles(files,append){
     try{const p=await decode(files[i]);out.push({key:libKey(files[i]),file:files[i],p,on:true,thumb:thumbOf(p)});}catch(e){console.warn('No se pudo leer',files[i].name,e);}
   }
   if(!out.length){$('loadMsg').textContent='No se pudo leer ninguna imagen.';return;}
-  if(append){library=library.concat(out);rebuildActive();renderPh();return;}
+  if(append){library=library.concat(out);rebuildActive();renderPh();setRefreshUi();return;}
   library.forEach(e=>e.p.img.close&&e.p.img.close());
   library=out;rebuildActive();sceneT=0;renderPh();
   $('start').style.display='none';
-  syncPlay();showBar();
+  syncPlay();showBar();setRefreshUi();
+}
+async function loadFilesKeepSettings(files){
+  clearPhSelection();
+  // Rematch por nombre para conservar el orden manual (Ordenar fotos); archivos nuevos al final
+  if(library.length){await syncLibraryFromFiles(files);setRefreshUi();return;}
+  files=[...files].filter(f=>EXT.test(f.name)||/^image\//.test(f.type)).filter(f=>!f.name.startsWith('.'));
+  files.sort((a,b)=>(a.webkitRelativePath||a.name).localeCompare(b.webkitRelativePath||b.name,undefined,{numeric:true,sensitivity:'base'}));
+  if(!files.length){flashWarn('No se encontraron imágenes en esa carpeta.');return;}
+  const out=[];
+  for(let i=0;i<files.length;i++){
+    try{const p=await decode(files[i]);out.push({key:libKey(files[i]),file:files[i],p,on:true,thumb:thumbOf(p)});}catch(e){console.warn(e);}
+  }
+  if(!out.length){flashWarn('No se pudo leer ninguna imagen.');return;}
+  library.forEach(e=>e.p.img.close&&e.p.img.close());
+  library=out;rebuildActive();renderPh();setRefreshUi(); // no toca mode/effect/adj/preset
 }
 function thumbOf(p){const c=document.createElement('canvas'),k=Math.min(1,220/Math.max(p.w,p.h));c.width=Math.max(1,Math.round(p.w*k));c.height=Math.max(1,Math.round(p.h*k));c.getContext('2d').drawImage(p.img,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.8);}
 function rebuildActive(){photos=library.filter(e=>e.on).map(e=>e.p);permCache.clear();albCache=null;
-  const n=photos.length;$('count').textContent=n+' de '+library.length+' fotos activas';$('phBtn').textContent='🖼 Fotos ('+n+'/'+library.length+')';$('phCount').textContent=n+' de '+library.length+' activas';
+  const n=photos.length;$('count').textContent=n+' de '+library.length+' fotos activas';$('phBtn').textContent='Fotos ('+n+'/'+library.length+')';$('phCount').textContent=n+' de '+library.length+' activas';
   const C=cycle();if(C>0&&sceneT>C)sceneT%=C;if(typeof updModal==='function')updModal();}
-let phPending=null;
-function askRemove(e,btn){phPending=e;const c=$('phConfirm');$('phConfName').textContent=e.p.name;c.classList.add('open');
+let phPending=null; // entry or {batch:entries[]}
+let phSelected=new Set(); // library indices
+let phLastClicked=-1;
+function updateSelBar(){
+  const n=phSelected.size, bar=$('phSelBar'), cnt=$('phSelCount');
+  if(!bar)return;
+  bar.classList.toggle('show',n>0);
+  cnt.textContent=n===1?'1 seleccionada':n+' seleccionadas';
+}
+function clearPhSelection(){
+  phSelected.clear();phLastClicked=-1;
+  document.querySelectorAll('#phGrid .th.sel').forEach(el=>el.classList.remove('sel'));
+  updateSelBar();
+}
+function setThumbSel(d,i,on){
+  if(on)phSelected.add(i);else phSelected.delete(i);
+  d.classList.toggle('sel',on);
+}
+function placeConfirm(btn){
+  const c=$('phConfirm');c.classList.add('open');
   const r=btn.getBoundingClientRect(),br=$('bar').getBoundingClientRect(),w=c.offsetWidth,h=c.offsetHeight,cx=r.left+r.width/2;
   let x=Math.max(br.left+8,Math.min(br.right-8-w,cx-w/2));x=Math.max(8,Math.min(innerWidth-8-w,x));
-  const below=r.top-h-10<8;c.classList.toggle('below',below);c.style.left=x+'px';c.style.top=(below?r.bottom+10:r.top-h-10)+'px';c.style.setProperty('--ax',(cx-x)+'px');$('phConfOk').focus({preventScroll:true});}
+  const below=r.top-h-10<8;c.classList.toggle('below',below);c.style.left=x+'px';c.style.top=(below?r.bottom+10:r.top-h-10)+'px';c.style.setProperty('--ax',(cx-x)+'px');$('phConfOk').focus({preventScroll:true});
+}
+function askRemove(e,btn){
+  phPending=e;
+  $('phConfMsg').textContent='¿Quitar esta foto de la galería?';
+  $('phConfName').textContent=e.p.name;
+  $('phConfOk').textContent='Quitar';
+  placeConfirm(btn);
+}
+function askRemoveBatch(entries,btn){
+  phPending={batch:entries};
+  const n=entries.length;
+  $('phConfMsg').textContent=n===1?'¿Quitar 1 foto seleccionada de la galería?':'¿Quitar '+n+' fotos seleccionadas de la galería?';
+  $('phConfName').textContent=entries.slice(0,3).map(e=>e.p.name).join(', ')+(n>3?'…':'');
+  $('phConfOk').textContent='Borrar';
+  placeConfirm(btn);
+}
 function cancelRemove(){phPending=null;$('phConfirm').classList.remove('open');}
-function doRemove(){const e=phPending;cancelRemove();if(!e||!library.includes(e))return;if(library.length<=1||e.on&&library.filter(x=>x.on).length<=1){flashWarn('Tiene que quedar al menos una foto activa.');return;}library.splice(library.indexOf(e),1);rebuildActive();renderPh();requestAnimationFrame(()=>requestAnimationFrame(()=>e.p.img.close&&e.p.img.close()));}
+function canRemoveEntries(entries){
+  if(!entries.length)return false;
+  if(library.length-entries.length<1)return false;
+  const remOn=library.filter(x=>x.on&&!entries.includes(x)).length;
+  return remOn>=1;
+}
+function doRemove(){
+  const p=phPending;cancelRemove();
+  if(!p)return;
+  const entries=p.batch||[p];
+  if(!canRemoveEntries(entries)){flashWarn('Tiene que quedar al menos una foto activa.');return;}
+  const set=new Set(entries);
+  for(let i=library.length-1;i>=0;i--)if(set.has(library[i]))library.splice(i,1);
+  clearPhSelection();rebuildActive();renderPh();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{entries.forEach(e=>{try{e.p.img.close&&e.p.img.close();}catch(_){}});}));
+}
 function flashWarn(m){$('phWarn').textContent=m;clearTimeout(flashWarn.t);flashWarn.t=setTimeout(()=>$('phWarn').textContent='',3500);}
-function renderPh(){const g=$('phGrid');g.innerHTML='';library.forEach((e,i)=>{const d=document.createElement('div');d.className='th'+(e.on?'':' off');
-  d.innerHTML=`<img alt=""><input type="checkbox" aria-label="Usar foto"><button class="rm" title="Quitar de la lista" aria-label="Quitar de la lista"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg></button><div class="nm"></div>`;
-  d.querySelector('img').src=e.thumb;d.querySelector('.nm').textContent=e.p.name;const cb=d.querySelector('input');cb.checked=e.on;
-  const set=v=>{if(!v&&library.filter(x=>x.on).length<=1){cb.checked=true;flashWarn('Tiene que quedar al menos una foto activa.');return;}e.on=v;cb.checked=v;d.classList.toggle('off',!v);rebuildActive();};
-  cb.onchange=()=>set(cb.checked);d.querySelector('img').onclick=()=>set(!e.on);
-  d.querySelector('.rm').onclick=ev=>{ev.stopPropagation();if(library.length<=1||e.on&&library.filter(x=>x.on).length<=1){flashWarn('Tiene que quedar al menos una foto activa.');return;}askRemove(e,ev.currentTarget);};
-  g.appendChild(d);});}
+function renderPh(){
+  // drop stale selection indices
+  const keep=new Set();phSelected.forEach(i=>{if(i>=0&&i<library.length)keep.add(i);});phSelected=keep;
+  const g=$('phGrid');g.innerHTML='';
+  library.forEach((e,i)=>{
+    const d=document.createElement('div');d.className='th'+(e.on?'':' off')+(phSelected.has(i)?' sel':'');
+    d.dataset.i=String(i);
+    d.innerHTML=`<img alt=""><input type="checkbox" aria-label="Usar foto"><button class="rm" title="Quitar de la lista" aria-label="Quitar de la lista"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg></button><div class="nm"></div>`;
+    d.querySelector('img').src=e.thumb;d.querySelector('.nm').textContent=e.p.name;const cb=d.querySelector('input');cb.checked=e.on;
+    const set=v=>{if(!v&&library.filter(x=>x.on).length<=1){cb.checked=true;flashWarn('Tiene que quedar al menos una foto activa.');return;}e.on=v;cb.checked=v;d.classList.toggle('off',!v);rebuildActive();};
+    cb.onchange=()=>set(cb.checked);
+    d.querySelector('img').onclick=ev=>{
+      if(ev.shiftKey||ev.metaKey||ev.ctrlKey){
+        ev.preventDefault();
+        if(ev.shiftKey&&phLastClicked>=0){
+          const a=Math.min(phLastClicked,i),b=Math.max(phLastClicked,i);
+          for(let j=a;j<=b;j++){const th=g.children[j];if(th)setThumbSel(th,j,true);}
+        }else{
+          setThumbSel(d,i,!phSelected.has(i));
+          phLastClicked=i;
+        }
+        updateSelBar();
+        return;
+      }
+      set(!e.on);
+      phLastClicked=i;
+    };
+    d.onclick=ev=>{
+      if(ev.target.closest('input,button.rm'))return;
+      if(ev.target.tagName==='IMG')return; // handled above
+      if(ev.shiftKey||ev.metaKey||ev.ctrlKey){
+        ev.preventDefault();
+        if(ev.shiftKey&&phLastClicked>=0){
+          const a=Math.min(phLastClicked,i),b=Math.max(phLastClicked,i);
+          for(let j=a;j<=b;j++){const th=g.children[j];if(th)setThumbSel(th,j,true);}
+        }else{
+          setThumbSel(d,i,!phSelected.has(i));
+          phLastClicked=i;
+        }
+        updateSelBar();
+      }
+    };
+    d.querySelector('.rm').onclick=ev=>{
+      ev.stopPropagation();
+      if(library.length<=1||e.on&&library.filter(x=>x.on).length<=1){flashWarn('Tiene que quedar al menos una foto activa.');return;}
+      askRemove(e,ev.currentTarget);
+    };
+    g.appendChild(d);
+  });
+  updateSelBar();
+}
 // re-escalar desde los originales cuando cambia el formato
 let redecT=null,redecGen=0;
 function redecodeAll(){clearTimeout(redecT);redecT=setTimeout(async()=>{if(!library.length||exporting)return;const gen=++redecGen;
@@ -395,16 +679,72 @@ async function decode(file){
   let img=c;try{img=await createImageBitmap(c);}catch(e){}
   return{img,w:tw,h:th,name:file.name};
 }
-$('dirInput').addEventListener('change',e=>{if(e.target.files.length)loadFiles(e.target.files);e.target.value='';});
-['addDirInput','addFilesInput'].forEach(id=>$(id).addEventListener('change',e=>{if(e.target.files.length)loadFiles(e.target.files,true);e.target.value='';$('addMenu').classList.remove('open');}));
-$('addBtn').onclick=()=>$('addMenu').classList.toggle('open');$('addFilesBtn').onclick=()=>$('addFilesInput').click();$('addDirBtn').onclick=()=>$('addDirInput').click();
+$('dirInput').addEventListener('change',e=>{if(e.target.files.length){photosDirHandle=null;const keep=refreshPick||library.length>0;refreshPick=false;setRefreshUi();if(keep)loadFilesKeepSettings(e.target.files);else loadFiles(e.target.files);}e.target.value='';});
+['addDirInput','addFilesInput'].forEach(id=>$(id).addEventListener('change',e=>{if(e.target.files.length)loadFiles(e.target.files,true);e.target.value='';}));
+$('addFilesBtn').onclick=()=>$('addFilesInput').click();
+$('addDirBtn').onclick=()=>pickPhotosFolder(true);
+$('startFolderBtn').onclick=()=>pickPhotosFolder(false);
+$('refreshBtn').onclick=()=>refreshPhotosFolder();
+setRefreshUi();
 function setTab(t){document.querySelectorAll('#bar .tab').forEach(b=>{const on=b.dataset.tab===t;b.classList.toggle('on',on);b.setAttribute('aria-selected',on);});document.querySelectorAll('#bar .tabpane').forEach(p=>p.classList.toggle('on',p.dataset.pane===t));$('bar').classList.toggle('tab-fotos',t==='fotos');try{localStorage.setItem('ssTab',t);}catch(e){}if(setTab.ready)syncPanel();}
 document.querySelectorAll('#bar .tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 setTab((()=>{try{return localStorage.getItem('ssTab')}catch(e){}})()==='fotos'?'fotos':'slideshow');setTab.ready=true;
 let phCols=+(()=>{try{return localStorage.getItem('ssCols')}catch(e){}})()||3;
 function setCols(n){phCols=Math.max(1,Math.min(6,n));$('phGrid').style.setProperty('--cols',phCols);$('phLess').disabled=phCols<=1;$('phMore').disabled=phCols>=6;try{localStorage.setItem('ssCols',phCols);}catch(e){}}
 $('phLess').onclick=()=>setCols(phCols-1);$('phMore').onclick=()=>setCols(phCols+1);setCols(phCols);
+let sortDraft=null,sortCols=4,sortDrag=null;
+function setSortCols(n){
+  sortCols=Math.max(2,Math.min(8,n));
+  const g=$('sortGrid');if(g)g.style.setProperty('--sortCols',sortCols);
+  $('sortZoomIn').disabled=sortCols<=2;$('sortZoomOut').disabled=sortCols>=8;
+}
+function openSortModal(){
+  if(!library.length){flashWarn('No hay fotos para ordenar.');return;}
+  if(mode!=='album'&&mode!=='film'){flashWarn('Ordenar solo aplica en Álbum y Film.');return;}
+  sortDraft=library.map((e,i)=>({e,i}));
+  setSortCols(sortCols);renderSortGrid();
+  $('sortModal').classList.add('open');
+  $('sortApply').focus({preventScroll:true});
+}
+function closeSortModal(){sortDraft=null;sortDrag=null;$('sortModal').classList.remove('open');$('sortGrid').innerHTML='';}
+function renderSortGrid(){
+  const g=$('sortGrid');g.innerHTML='';if(!sortDraft)return;
+  sortDraft.forEach((item,idx)=>{
+    const d=document.createElement('div');d.className='sth';d.draggable=true;d.dataset.idx=String(idx);
+    d.innerHTML=`<span class="ord">${idx+1}</span><img alt=""><div class="nm"></div>`;
+    d.querySelector('img').src=item.e.thumb;d.querySelector('.nm').textContent=item.e.p.name;
+    d.addEventListener('dragstart',ev=>{sortDrag=idx;d.classList.add('drag');ev.dataTransfer.effectAllowed='move';try{ev.dataTransfer.setData('text/plain',String(idx));}catch(_){}});
+    d.addEventListener('dragend',()=>{sortDrag=null;document.querySelectorAll('#sortGrid .sth.drag,#sortGrid .sth.over').forEach(el=>el.classList.remove('drag','over'));});
+    d.addEventListener('dragover',ev=>{ev.preventDefault();ev.dataTransfer.dropEffect='move';d.classList.add('over');});
+    d.addEventListener('dragleave',()=>d.classList.remove('over'));
+    d.addEventListener('drop',ev=>{
+      ev.preventDefault();d.classList.remove('over');
+      let from=sortDrag;if(from==null){try{from=+ev.dataTransfer.getData('text/plain');}catch(_){return;}}
+      const to=idx;if(from===to||from<0||from>=sortDraft.length)return;
+      const [moved]=sortDraft.splice(from,1);sortDraft.splice(to,0,moved);renderSortGrid();
+    });
+    g.appendChild(d);
+  });
+}
+function applySortOrder(){
+  if(!sortDraft||!sortDraft.length){closeSortModal();return;}
+  library=sortDraft.map(x=>x.e);
+  clearPhSelection();rebuildActive();renderPh();closeSortModal();
+  flashWarn('Orden aplicado ('+library.length+' fotos).');
+}
+$('sortBtn').onclick=openSortModal;
+$('sortCancel').onclick=closeSortModal;
+$('sortApply').onclick=applySortOrder;
+$('sortZoomIn').onclick=()=>setSortCols(sortCols-1);
+$('sortZoomOut').onclick=()=>setSortCols(sortCols+1);
 $('phConfOk').onclick=doRemove;$('phConfCancel').onclick=cancelRemove;
+$('phSelClear').onclick=()=>{clearPhSelection();};
+$('phSelDel').onclick=ev=>{
+  const entries=[...phSelected].sort((a,b)=>a-b).map(i=>library[i]).filter(Boolean);
+  if(!entries.length)return;
+  if(!canRemoveEntries(entries)){flashWarn('Tiene que quedar al menos una foto activa.');return;}
+  askRemoveBatch(entries,ev.currentTarget);
+};
 $('phAll').onclick=()=>{library.forEach(e=>e.on=true);rebuildActive();renderPh();};
 $('phNone').onclick=()=>{library.forEach((e,i)=>e.on=i===0);rebuildActive();renderPh();flashWarn('Se deja una foto activa (no puede quedar ninguna).');};
 
@@ -717,12 +1057,13 @@ function frame(ts){syncAdjBtns();
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
+try{tryLoadEmbeddedPreset();}catch(e){console.warn(e);}
 
 // ---------- controles ----------
 let hideTimer;
 let panelCollapsed=false;
 function syncPanel(){const open=!$('bar').classList.contains('hide')&&!panelCollapsed;$('bar').classList.toggle('collapsed',panelCollapsed);document.body.classList.toggle('panel-open',open);}
-function panelBusy(){const b=$('bar');return b.matches(':hover')||b.contains(document.activeElement)&&document.activeElement!==document.body||$('addMenu').classList.contains('open');}
+function panelBusy(){const b=$('bar');return b.matches(':hover')||(b.contains(document.activeElement)&&document.activeElement!==document.body);}
 function scheduleHide(){clearTimeout(hideTimer);hideTimer=setTimeout(()=>{if(playing&&!exporting&&!panelBusy()){$('bar').classList.add('hide');$('panelTab').classList.add('hide');syncPanel();}else scheduleHide();},2500);}
 function showBar(){if(!photos.length)return;$('panelTab').classList.remove('hide');if(!panelCollapsed)$('bar').classList.remove('hide');syncPanel();scheduleHide();}
 addEventListener('mousemove',showBar);addEventListener('touchstart',showBar);
@@ -758,7 +1099,7 @@ $('filmOri').onchange=e=>setFilmOri(e.target.value);
 $('filmSizeR').oninput=e=>{const old=cycle();filmSize=e.target.value/100;$('filmSizeV').textContent=e.target.value+'%';if(mode==='film'&&old>0)sceneT=sceneT*cycle()/old;updModal();};
 document.querySelectorAll('.fx').forEach(el=>el.oninput=()=>{fx[el.dataset.k]=el.value/100;el.nextElementSibling.textContent=el.value+'%';});
 function setFx(o){document.querySelectorAll('.fx').forEach(el=>{el.value=Math.round(o[el.dataset.k]*100);el.oninput();});}
-window.__seek=t=>{sceneT=t;};window.__t={lib:()=>library,photos:()=>photos,cycle:()=>cycle(),render:T=>render(T),resetAlb:()=>{albCache=null;},albGeom:()=>albGeom()}; // ayuda para pruebas: saltar a un instante
+window.__seek=t=>{sceneT=t;};window.__t={lib:()=>library,photos:()=>photos,openSort:()=>openSortModal(),closeSort:()=>closeSortModal(),sortDraft:()=>sortDraft&&sortDraft.map(x=>x.e.p.name),sortCols:()=>sortCols,setSortCols:n=>setSortCols(n),cycle:()=>cycle(),render:T=>render(T),resetAlb:()=>{albCache=null;},albGeom:()=>albGeom(),collectPreset:()=>collectPreset(),applyPreset:P=>applyPreset(P),matchPhotos:fs=>matchPhotosFromFiles(fs),refresh:()=>refreshPhotosFolder(),setDirHandle:h=>{photosDirHandle=h;setRefreshUi();},syncFromFiles:fs=>syncLibraryFromFiles(fs)}; // ayuda para pruebas: saltar a un instante
 $('albSec').oninput=e=>{const old=albSec;albSec=ALB_STEPS[+e.target.value];if(mode==='album')sceneT=sceneT*albSec/old;$('albSecV').textContent=albSec;updModal();};
 $('albFlip').oninput=e=>{albFlip=+e.target.value;$('albFlipV').textContent=albFlip+' s';};
 $('albPer').onchange=e=>{albPer=e.target.value;updModal();};
@@ -810,7 +1151,7 @@ valSpans.forEach(sp=>{sp.classList.add('val');splitVal(sp);valObs.observe(sp,{ch
  // fuera del panel lateral (que recorta con scroll)
 $('fxBtn').onclick=()=>{const id=EFFECTS[effect].panel;if(!id)return;const el=$(id),o=el.classList.toggle('open');$('fxBtn').classList.toggle('on',o);$('fxBtn').setAttribute('aria-expanded',o);};
 // cerrar paneles al tocar afuera o con Escape
-function closePanels(){document.querySelectorAll('#addMenu.open').forEach(p=>p.classList.remove('open'));}
+function closePanels(){}
 function closeModal(){
   if($('modal').style.display!=='flex')return;
   if(exporting){if(!confirm('Hay una exportación en curso. ¿Cancelarla?'))return;exporting.cancel();}
@@ -820,11 +1161,12 @@ document.addEventListener('pointerdown',e=>{
   const t=e.target;
   if($('ovModal').style.display==='flex'&&!t.closest('#ovModal .card'))closeOv();
   if($('phConfirm').classList.contains('open')&&!t.closest('#phConfirm'))cancelRemove();
-    if(!t.closest('#addMenu')&&!t.closest('#addBtn'))$('addMenu').classList.remove('open');
   if($('modal').style.display==='flex'&&!t.closest('#modal .card'))closeModal();
 },true);
 addEventListener('keydown',e=>{if(e.key==='Escape'&&$('phConfirm').classList.contains('open')){cancelRemove();return;}
-  if(e.key==='Escape'){if($('ovModal').style.display==='flex')closeOv();else if($('modal').style.display==='flex')closeModal();else closePanels();}});
+  if(e.key==='Escape'&&$('sortModal').classList.contains('open')){closeSortModal();return;}
+  if(e.key==='Escape'&&phSelected.size){clearPhSelection();return;}
+  if(e.key==='Escape'){if($('matchModal').style.display==='flex')closeMatch();else if($('ovModal').style.display==='flex')closeOv();else if($('modal').style.display==='flex')closeModal();else closePanels();}});
 function adjFmt(k,v){return k==='h'?Math.round(v)+'°':k==='s'||k==='o'?Math.round(v)+'%':k==='e'?(+v).toFixed(1)+' EV':String(Math.round(v));}
 document.querySelectorAll('#bar .adjp').forEach(p=>{const L=p.dataset.layer;
   const sync=()=>{p.querySelectorAll('input[type=range]').forEach(i=>{i.value=adj[L][i.dataset.k];i.nextElementSibling.textContent=adjFmt(i.dataset.k,adj[L][i.dataset.k]);});p.querySelector('select[data-k=b]').value=adj[L].b;};
@@ -837,6 +1179,143 @@ $('fxReset').onclick=()=>setFx(FX_DEF);
 $('sizeR').oninput=e=>{updModal();sizeMul=e.target.value/100;$('sizeV').textContent=e.target.value+'%';};
 $('interval').oninput=e=>{const old=spacing();dur=DUR_STEPS[+e.target.value];sceneT=sceneT*spacing()/old;$('intervalV').textContent=dur;updModal();};
 $('perScreen').oninput=e=>{const old=spacing();perScreen=+e.target.value;sceneT=sceneT*spacing()/old;$('perScreenV').textContent=perScreen;updModal();};
+
+
+// ---------- proyecto: preset JSON + HTML con rutas ----------
+const PRESET_VER=2;
+let pendingPreset=null,lastPresetName=(()=>{try{return localStorage.getItem('ssPresetName')||'';}catch(e){return '';}})();
+function syncProjName(){const el=$('projName');if(el)el.textContent=lastPresetName?('Preset: '+lastPresetName):'';}
+syncProjName();
+function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);}
+function collectPreset(){
+  return{
+    version:PRESET_VER,name:lastPresetName||'slideshow',
+    folder:'fotos/',
+    format:{w:W,h:H,inv:!!$('frameInv').checked,preset:$('frameFmt').value},
+    bgColor:BG,frameColor,mode,effect,fx:{...fx},adj:{Bg:{...adj.Bg},Ov:{...adj.Ov},Alb:{...adj.Alb}},
+    float:{dur,perScreen,sizeMul},
+    film:{speed:filmSpeedV,crop:filmCrop,ori:filmVert?'v':'h',dir:filmDir,size:filmSize,flare},
+    table:{spacing:tblS,stack:tblStack},
+    album:{sec:albSec,flip:albFlip,per:albPer,color:albColor,custom:albCustom,corners:albCornersOn,corner:albCorner,cover:albCover,w:albW,h:albH},
+    photos:library.map(e=>({name:e.p.name,on:!!e.on,size:e.file&&e.file.size||0})), // metadatos opcionales; Aplicar preset no exige las mismas fotos
+    hasDefaultMarco:!!(ovImg&&($('ovName').textContent||'').includes('predeterminado')),
+    hasBgImage:!!(bgOn&&bgImg),
+    export:{fps:+($('fps').value||30),loops:Math.max(1,parseInt($('loops').value)||1)},
+    ui:{tab:(document.querySelector('#bar .tab.on')||{}).dataset?.tab||'slideshow',cols:phCols},
+    note:'Ajustes solamente. La lista de fotos es opcional (metadatos). Flujo: Guardar preset → cargar otras fotos → Aplicar preset. El HTML exportado usa rutas relativas a fotos/.'
+  };
+}
+function applyPreset(P){
+  if(!P||typeof P!=='object')throw new Error('Preset inválido');
+  if(P.version&&P.version>PRESET_VER)console.warn('Preset de versión más nueva',P.version);
+  lastPresetName=P.name||lastPresetName||'slideshow';try{localStorage.setItem('ssPresetName',lastPresetName);}catch(e){}syncProjName();
+  if(P.bgColor){BG=P.bgColor;$('bgColor').value=BG;}
+  if(P.frameColor){frameColor=P.frameColor;$('frameColorC').value=frameColor;}
+  if(P.format){const f=P.format;$('frameInv').checked=!!f.inv;relabelFmt();
+    if(f.preset&&[...$('frameFmt').options].some(o=>o.value===f.preset))$('frameFmt').value=f.preset;
+    else $('frameFmt').value='custom';
+    if($('frameFmt').value==='custom'){$('frameW').value=f.w||W;$('frameH').value=f.h||H;}
+    applyFmt();
+  }
+  if(P.float){dur=P.float.dur||dur;perScreen=P.float.perScreen||perScreen;sizeMul=P.float.sizeMul??sizeMul;
+    const di=DUR_STEPS.indexOf(dur);$('interval').value=di>=0?di:13;$('intervalV').textContent=dur;
+    $('perScreen').value=perScreen;$('perScreenV').textContent=perScreen;
+    $('sizeR').value=Math.round(sizeMul*100);$('sizeV').textContent=Math.round(sizeMul*100)+'%';}
+  if(P.mode){mode=P.mode;$('mode').value=mode;document.body.className=(document.body.className.replace(/\bmode-\w+/g,'')+' mode-'+mode).trim();}
+  if(P.film){filmSpeedV=P.film.speed??filmSpeedV;$('filmSpeed').value=filmSpeedV;$('filmSpeedV').textContent=Math.round(filmPxPerSec())+' px/s';
+    filmCrop=!!P.film.crop;$('filmCrop').checked=filmCrop;setFilmOri(P.film.ori||'h');filmDir=+(P.film.dir||0);$('filmDir').value=String(filmDir);
+    filmSize=P.film.size??filmSize;$('filmSizeR').value=Math.round(filmSize*100);$('filmSizeV').textContent=Math.round(filmSize*100)+'%';
+    flare=P.film.flare??flare;$('flare').value=Math.round(flare*100);$('flareV').textContent=Math.round(flare*100)+'%';}
+  if(P.table){tblS=P.table.spacing??tblS;const ti=TBL_STEPS.indexOf(tblS);$('tblSpacing').value=ti>=0?ti:5;$('tblSpacingV').textContent=tblS;
+    tblStack=P.table.stack??tblStack;$('tblStack').value=tblStack;$('tblStackV').textContent=tblStack;}
+  if(P.album){const A=P.album;albSec=A.sec??albSec;const ai=ALB_STEPS.indexOf(albSec);$('albSec').value=ai>=0?ai:6;$('albSecV').textContent=albSec;
+    albFlip=A.flip??albFlip;$('albFlip').value=albFlip;$('albFlipV').textContent=albFlip+' s';
+    albPer=A.per||albPer;$('albPer').value=albPer;albColor=A.color||albColor;$('albColor').value=albColor;$('albCustomC').style.display=albColor==='custom'?'':'none';
+    if(A.custom){albCustom=A.custom;$('albCustomC').value=albCustom;}albCornersOn=A.corners!==false;$('albCorners').checked=albCornersOn;
+    if(A.corner){albCorner=A.corner;$('albCornerC').value=albCorner;}if(A.cover){albCover=A.cover;$('albCoverC').value=albCover;}
+    if(A.w!=null&&A.h!=null)setAlb(Math.round(A.w*100),Math.round(A.h*100));albCache=null;}
+  if(P.effect!=null){effect=P.effect;$('effect').value=effect;$('fxBtn').disabled=!EFFECTS[effect].panel;}
+  if(P.fx)setFx(P.fx);
+  if(P.adj){for(const L of ['Bg','Ov','Alb']){if(!P.adj[L])continue;Object.assign(adj[L],ADJ_DEF,P.adj[L]);adjVer[L]++;}
+    document.querySelectorAll('#bar .adjp').forEach(p=>{const L=p.dataset.layer;p.querySelectorAll('input[type=range]').forEach(i=>{i.value=adj[L][i.dataset.k];i.nextElementSibling.textContent=adjFmt(i.dataset.k,adj[L][i.dataset.k]);});const bs=p.querySelector('select[data-k=b]');if(bs)bs.value=adj[L].b;});albCache=null;}
+  if(P.hasBgImage===false&&bgOn){bgOn=false;setBgOffIcon();}
+  if(P.hasDefaultMarco===false&&ovImg){ovImg=null;$('ovOff').disabled=true;$('ovName').textContent='';}
+  if(P.export){if(P.export.fps){const o=[...$('fps').options].find(x=>+x.value===+P.export.fps);if(o)$('fps').value=o.value;else $('fps').value=String(P.export.fps);}
+    if(P.export.loops!=null)$('loops').value=Math.max(1,parseInt(P.export.loops)||1);}
+  if(P.ui){if(P.ui.tab)setTab(P.ui.tab);if(P.ui.cols)setCols(+P.ui.cols);}
+  sceneT=0;updModal();
+  pendingPreset=P;
+  return P;
+}
+function openMatchModal(missing){
+  $('matchList').textContent=(pendingPreset&&pendingPreset.photos||[]).map(p=>(p.on?'• ':'– ')+p.name).join('\n')||'(sin lista de fotos)';
+  const w=$('matchWarn');if(missing&&missing.length){w.style.display='block';w.textContent='Faltan '+missing.length+': '+missing.join(', ');}else w.style.display='none';
+  $('matchModal').style.display='flex';
+}
+function closeMatch(){$('matchModal').style.display='none';}
+async function matchPhotosFromFiles(fileList){
+  const files=[...fileList].filter(f=>EXT.test(f.name)||/^image\//.test(f.type));
+  const by=new Map();files.forEach(f=>{if(!by.has(f.name))by.set(f.name,f);});
+  const want=pendingPreset&&pendingPreset.photos||[];
+  if(!want.length){await loadFiles(files);closeMatch();pendingPreset=null;return;}
+  const out=[],missing=[];
+  for(const ph of want){
+    const f=by.get(ph.name);if(!f){missing.push(ph.name);continue;}
+    try{const p=await decode(f);out.push({key:libKey(f),file:f,p,on:ph.on!==false,thumb:thumbOf(p)});}catch(e){missing.push(ph.name);console.warn(e);}
+  }
+  if(out.length){library.forEach(e=>e.p.img.close&&e.p.img.close());library=out;rebuildActive();sceneT=0;renderPh();$('start').style.display='none';syncPlay();showBar();}
+  if(missing.length){openMatchModal(missing);flashWarn('Faltan '+missing.length+' fotos');}
+  else{closeMatch();pendingPreset=null;flashWarn('Preset aplicado: '+out.length+' fotos');}
+}
+$('savePresetBtn').onclick=()=>{
+  const P=collectPreset();let name=(lastPresetName||'slideshow').replace(/[^\w\-áéíóúñüÁÉÍÓÚÑÜ. ]+/gi,'_')||'slideshow';
+  if(name.toLowerCase().endsWith('.json'))name=name.slice(0,-5);
+  lastPresetName=name;P.name=name;try{localStorage.setItem('ssPresetName',name);}catch(e){}syncProjName();
+  downloadBlob(new Blob([JSON.stringify(P,null,2)],{type:'application/json'}),name+'.json');
+};
+$('openPresetBtn').onclick=()=>$('presetInput').click();
+$('presetInput').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{const P=JSON.parse(await f.text());lastPresetName=f.name.replace(/\.json$/i,'');applyPreset(P);pendingPreset=null;flashWarn('Preset aplicado a '+(library.length?library.length+' fotos actuales':'ajustes (carga fotos después)'));}catch(err){alert('No se pudo leer el preset: '+err.message);}});
+$('matchDir').onclick=async()=>{
+  if(window.showDirectoryPicker){try{const dir=await showDirectoryPicker();const files=[];
+    for await(const [name,h] of dir.entries()){if(h.kind==='file'&&EXT.test(name))files.push(await h.getFile());}
+    await matchPhotosFromFiles(files);return;}catch(e){if(e&&e.name==='AbortError')return;}}
+  $('matchDirInput').click();};
+$('matchFiles').onclick=()=>$('matchFilesInput').click();
+$('matchSkip').onclick=()=>{closeMatch();pendingPreset=null;};
+$('matchDirInput').addEventListener('change',e=>{matchPhotosFromFiles(e.target.files);e.target.value='';});
+$('matchFilesInput').addEventListener('change',e=>{matchPhotosFromFiles(e.target.files);e.target.value='';});
+function exportHtmlWithPaths(){
+  const P=collectPreset();const folder=(P.folder||'fotos/').replace(/\/?$/,'/');
+  P.photos=library.map(e=>({name:e.p.name,on:!!e.on,path:folder+e.p.name,size:e.file&&e.file.size||0}));
+  // file:// bloquea fetch del propio HTML: clonamos desde el DOM (los <script> conservan el código y assets embebidos del app)
+  let src='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  src=src.replace(/\n?<script id="ss-preset">[\s\S]*?<\/script>/g,'');
+  const boot='<script id="ss-preset">window.__SS_PRESET='+JSON.stringify(P)+';window.__SS_PHOTO_PATHS='+JSON.stringify(P.photos.map(x=>x.path))+';<\/script>';
+  if(src.includes('</body>'))src=src.replace('</body>',boot+'\n</body>');else src+=boot;
+  downloadBlob(new Blob([src],{type:'text/html;charset=utf-8'}),(lastPresetName||'slideshow')+'.html');
+  alert('HTML exportado.\n\nColoca este HTML junto a la carpeta fotos/ (o vuelve a elegir la carpeta). Las fotos no van incrustadas.');
+}
+$('exportHtmlBtn').onclick=exportHtmlWithPaths;
+async function decodeFromUrl(url,name){
+  const res=await fetch(url);if(!res.ok)throw new Error('HTTP '+res.status);
+  const blob=await res.blob();const file=new File([blob],name,{type:blob.type||'image/jpeg'});
+  return decode(file);
+}
+async function tryLoadEmbeddedPreset(){
+  const P=window.__SS_PRESET;if(!P)return;
+  try{applyPreset(P);}catch(e){console.warn(e);return;}
+  const paths=window.__SS_PHOTO_PATHS||(P.photos||[]).map(x=>x.path||((P.folder||'fotos/')+x.name));
+  if(!paths.length){openMatchModal([]);return;}
+  const out=[],missing=[],want=P.photos||[];
+  for(let i=0;i<want.length;i++){
+    const ph=want[i],url=paths[i]||((P.folder||'fotos/')+ph.name);
+    try{const p=await decodeFromUrl(url,ph.name);const fake={name:ph.name,size:ph.size||0};out.push({key:libKey(fake),file:fake,p,on:ph.on!==false,thumb:thumbOf(p)});}
+    catch(e){missing.push(ph.name);}
+  }
+  if(out.length){library=out;rebuildActive();sceneT=0;renderPh();$('start').style.display='none';syncPlay();showBar();}
+  if(missing.length||!out.length)openMatchModal(missing);else pendingPreset=null;
+}
 
 // ---------- exportar ----------
 function fmtT(s){s=Math.round(s);const m=Math.floor(s/60);return m+':'+String(s%60).padStart(2,'0');}
