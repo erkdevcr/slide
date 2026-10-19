@@ -9,6 +9,10 @@ canvas{background:rgb(236,228,212);box-shadow:0 0 40px rgba(0,0,0,.5)}
 #start{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(236,228,212,.97);z-index:10}
 .card{background:#fff;padding:32px 40px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.15);max-width:520px;text-align:center}
 .card h1{margin:0 0 8px;font-size:24px}.card p{color:#6b6157;margin:6px 0 18px}
+#start .startActions{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap}
+#start .startActions .btn{display:inline-flex;align-items:center;gap:6px}
+#start #startCancelBtn{background:#fff;color:#2b2622;border:1px solid #cfc4b2}
+#start #startCancelBtn:hover{background:#f5f0e8}
 button,.btn,select,input[type=number]{font:inherit;font-size:14px;border-radius:8px;border:1px solid #cfc4b2;background:#fff;color:#2b2622;padding:7px 12px;cursor:pointer}
 button.primary,.btn.primary{background:#2b2622;color:#fff;border-color:#2b2622}
 button:disabled{opacity:.5;cursor:default}
@@ -209,8 +213,11 @@ body.panel-open #panelTab{opacity:0;pointer-events:none}
 
 <div id="start"><div class="card">
   <h1>Slideshow de fotos</h1>
-  <p>Elige la carpeta con tus fotos. Se usarán todas las imágenes (JPG, PNG, WEBP, GIF, AVIF) ordenadas por nombre.</p>
-  <button type="button" class="btn primary" id="startFolderBtn"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> Elegir carpeta</button>
+  <p>Elige la carpeta con tus fotos (JPG, PNG, WEBP, GIF, AVIF), o cancela y agrégalas después desde el panel.</p>
+  <div class="startActions">
+    <button type="button" class="btn primary" id="startFolderBtn"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> Elegir carpeta</button>
+    <button type="button" class="btn" id="startCancelBtn">Cancelar</button>
+  </div>
   <div id="loadMsg" class="muted" style="margin-top:14px"></div>
 </div></div>
 <input type="file" id="bgInput" accept="image/*">
@@ -684,6 +691,11 @@ $('dirInput').addEventListener('change',e=>{if(e.target.files.length){photosDirH
 $('addFilesBtn').onclick=()=>$('addFilesInput').click();
 $('addDirBtn').onclick=()=>pickPhotosFolder(true);
 $('startFolderBtn').onclick=()=>pickPhotosFolder(false);
+function dismissStart(){
+  $('start').style.display='none';
+  rebuildActive();renderPh();syncPlay();showBar();
+}
+$('startCancelBtn').onclick=()=>dismissStart();
 $('refreshBtn').onclick=()=>refreshPhotosFolder();
 setRefreshUi();
 function setTab(t){document.querySelectorAll('#bar .tab').forEach(b=>{const on=b.dataset.tab===t;b.classList.toggle('on',on);b.setAttribute('aria-selected',on);});document.querySelectorAll('#bar .tabpane').forEach(p=>p.classList.toggle('on',p.dataset.pane===t));$('bar').classList.toggle('tab-fotos',t==='fotos');try{localStorage.setItem('ssTab',t);}catch(e){}if(setTab.ready)syncPanel();}
@@ -1065,10 +1077,10 @@ let panelCollapsed=false;
 function syncPanel(){const open=!$('bar').classList.contains('hide')&&!panelCollapsed;$('bar').classList.toggle('collapsed',panelCollapsed);document.body.classList.toggle('panel-open',open);}
 function panelBusy(){const b=$('bar');return b.matches(':hover')||(b.contains(document.activeElement)&&document.activeElement!==document.body);}
 function scheduleHide(){clearTimeout(hideTimer);hideTimer=setTimeout(()=>{if(playing&&!exporting&&!panelBusy()){$('bar').classList.add('hide');$('panelTab').classList.add('hide');syncPanel();}else scheduleHide();},2500);}
-function showBar(){if(!photos.length)return;$('panelTab').classList.remove('hide');if(!panelCollapsed)$('bar').classList.remove('hide');syncPanel();scheduleHide();}
+function showBar(){if($('start').style.display!=='none')return;$('panelTab').classList.remove('hide');if(!panelCollapsed)$('bar').classList.remove('hide');syncPanel();scheduleHide();}
 addEventListener('mousemove',showBar);addEventListener('touchstart',showBar);
 function syncPlay(){$('playOn').classList.toggle('on',playing);$('playOff').classList.toggle('on',!playing);$('playOn').setAttribute('aria-pressed',playing);$('playOff').setAttribute('aria-pressed',!playing);}
-function setPlaying(v){playing=v;syncPlay();showBar();}
+function setPlaying(v){if(v&&!photos.length){flashWarn('Agrega fotos para reproducir.');return;}playing=v;syncPlay();showBar();}
 $('playOn').onclick=()=>setPlaying(true);$('playOff').onclick=()=>setPlaying(false);$('playBtn').click=()=>setPlaying(!playing);syncPlay();
 addEventListener('keydown',e=>{if(e.code==='Space'&&!exporting&&photos.length&&$('modal').style.display!=='flex'){e.preventDefault();$('playBtn').click();}});
 function openOv(){$('ovModal').style.display='flex';}
@@ -1331,12 +1343,13 @@ function updModal(){
   const m=pickMime();$('fmt').textContent=m===null?'No soportado en este navegador':(m.startsWith('video/mp4')?'MP4 (H.264)':'WebM')+(m?'  · '+m:'');
 }
 $('loops').oninput=updModal;
-$('exportBtn').onclick=()=>{$('modal').querySelector('.card').classList.remove('done');updModal();$('prog').style.display='none';$('goBtn').disabled=false;$('modal').style.display='flex';};
+$('exportBtn').onclick=()=>{if(!photos.length){flashWarn('Agrega fotos antes de exportar.');return;}$('modal').querySelector('.card').classList.remove('done');updModal();$('prog').style.display='none';$('goBtn').disabled=false;$('modal').style.display='flex';};
 $('cancelBtn').onclick=()=>{if(exporting){exporting.cancel();}else $('modal').style.display='none';};
 $('goBtn').onclick=startExport;
 $('doneClose').onclick=()=>{$('modal').style.display='none';$('modal').querySelector('.card').classList.remove('done');$('prog').style.display='none';};
 
 function startExport(){
+  if(!photos.length){alert('Agrega fotos antes de exportar.');return;}
   const mime=pickMime();if(mime===null||!cv.captureStream){alert('Este navegador no permite grabar video desde el lienzo. Usa Chrome o Edge.');return;}
   const fps=+$('fps').value,loops=Math.max(1,parseInt($('loops').value)||1),total=cycle()*loops;
   const stream=cv.captureStream(fps);
