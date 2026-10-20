@@ -23,6 +23,8 @@ button:disabled{opacity:.5;cursor:default}
 #bar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.92);padding:10px 14px;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.25);transition:opacity .4s;z-index:5;flex-wrap:wrap;justify-content:center}
 body.mode-float :is(.m-float,.m-film,.m-table,.m-album):not(.m-float),body.mode-film :is(.m-float,.m-film,.m-table,.m-album):not(.m-film),body.mode-table :is(.m-float,.m-film,.m-table,.m-album):not(.m-table),body.mode-album :is(.m-float,.m-film,.m-table,.m-album):not(.m-album){display:none!important}
 body:not(.mode-album) section[data-sec="pasta"]{display:none!important}
+#albPerMaxWrap{display:flex;flex-direction:column;gap:4px;min-width:0}
+#albPerMaxWrap:has(select:disabled){opacity:.45}
 #fxPanel{display:none;position:absolute;bottom:calc(100% + 14px);left:50%;transform:translateX(-50%);background:rgba(255,255,255,.97);padding:12px 14px;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.25);min-width:300px}
 #fxPanel.open{display:block}
 #dirInput,#addDirInput,#addFilesInput{display:none}
@@ -307,7 +309,7 @@ body.panel-open #panelTab{opacity:0;pointer-events:none}
     <div class="m-film segRow"><span class="seglbl">Orientación</span><div class="seg" id="filmOriSeg" role="group" aria-label="Orientación"><button type="button" data-v="h" class="on">Horizontal</button><button type="button" data-v="v">Vertical</button></div></div>
     <div class="m-film segRow"><span class="seglbl">Dirección</span><div class="seg" id="filmDirSeg" role="group" aria-label="Dirección"><button type="button" data-v="0" class="on">← Izquierda</button><button type="button" data-v="1">→ Derecha</button></div></div>
     <label class="m-table"><span class="slbl">Fotos en la pila</span><input type="range" id="tblStack" min="3" max="20" step="1" value="8"><span id="tblStackV">8</span></label>
-    <label class="m-album">Fotos por página <select id="albPer"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="mix" selected>Mixto</option></select></label>
+    <div class="row2 m-album" id="albPerRow"><label>Fotos por página <select id="albPer"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="mix" selected>Mixto</option></select></label><label id="albPerMaxWrap" title="Máximo de fotos por página cuando eliges Mixto">Máx. <select id="albPerMax"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4" selected>4</option></select></label></div>
   </section>
   <section data-sec="estilo"><h3>Estilo</h3>
     <div class="m-float m-table palBlock" id="framePalBlock" title="Hasta 8 colores; uno = todas las fotos; varios = al azar por foto (estable)">
@@ -325,13 +327,13 @@ body.panel-open #panelTab{opacity:0;pointer-events:none}
     <!-- compat oculto para presets antiguos -->
     <select id="albColor" style="display:none" aria-hidden="true"><option value="cream">Crema</option><option value="black">Negro</option><option value="kraft">Kraft</option><option value="custom" selected>Personalizado</option></select>
     <input type="color" id="albCustomC" value="#efe6d1" style="display:none" aria-hidden="true">
-    <div class="row2 m-album"><label class="btn" for="albPageInput" title="Cargar una imagen para las hojas (se estira a la página completa)"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.5" fill="currentColor" stroke="none"/><path d="M3 16l5-4 4 3 3-2 6 4"/></svg> Imagen de hoja</label><button class="icon" id="albPageOff" title="Quitar imagen de hoja" aria-label="Quitar imagen de hoja" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg></button><button class="icon adjBtn" data-for="adjAlb" aria-label="Ajustar imagen de hoja" title="Ajustar imagen de hoja" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
+    <div class="row2 m-album"><label class="btn" for="albPageInput" title="Cargar una imagen para las páginas (se estira a la página completa)"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.5" fill="currentColor" stroke="none"/><path d="M3 16l5-4 4 3 3-2 6 4"/></svg> Imagen de página</label><button class="icon" id="albPageOff" title="Quitar imagen de página" aria-label="Quitar imagen de página" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg></button><button class="icon adjBtn" data-for="adjAlb" aria-label="Ajustar imagen de página" title="Ajustar imagen de página" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
     <div class="m-album adjp" id="adjAlb" data-layer="Alb"><label title="Hue"><span class="slbl">Tono</span><input type="range" data-k="h" min="-180" max="180" step="1" value="0"><span>0°</span></label><label title="Saturation"><span class="slbl">Saturación</span><input type="range" data-k="s" min="0" max="200" step="1" value="100"><span>100%</span></label><label title="White balance / temperature (− frío, + cálido)"><span class="slbl">Balance de blancos</span><input type="range" data-k="t" min="-100" max="100" step="1" value="0"><span>0</span></label><label title="Exposure (EV)"><span class="slbl">Exposición</span><input type="range" data-k="e" min="-2" max="2" step="0.1" value="0"><span>0 EV</span></label><label title="Opacity"><span class="slbl">Opacidad</span><input type="range" data-k="o" min="0" max="100" step="1" value="100"><span>100%</span></label><label title="Blend mode">Modo de fusión<select data-k="b"><option value="normal">Normal</option><option value="multiply">Multiplicar</option><option value="overlay">Superponer</option></select></label><div class="adjbtns"><button class="adjReset">Restablecer</button></div></div>
   </section>
-  <section data-sec="pasta" class="m-album"><h3>Pasta</h3>
+  <section data-sec="pasta" class="m-album"><h3>Pasta y Esquinas</h3>
     <label class="chk"><input type="checkbox" id="albCorners" checked> Esquinas</label>
-    <label title="Color de las esquinas">Color esquinas <input type="color" id="albCornerC" value="#c1b082"></label>
-    <label title="Color de la pasta del álbum">Pasta <input type="color" id="albCoverC" value="#5b3b22"></label>
+    <label title="Color de las esquinas">Color de esquina <input type="color" id="albCornerC" value="#c1b082"></label>
+    <label title="Color de la pasta del álbum">Color de pasta <input type="color" id="albCoverC" value="#5b3b22"></label>
   </section>
   <section data-sec="escala"><h3>Escala</h3>
     <label class="m-float m-table"><span class="slbl">Tamaño</span><input type="range" id="sizeR" min="50" max="160" step="5" value="100"><span id="sizeV">100%</span></label>
@@ -964,7 +966,7 @@ function drawPhoto(p,pr,t){ // t en [0,1]
 }
 // ---------- modo álbum (page flip) ----------
 const ALB_STEPS=[];for(let v=1;v<=10;v+=0.5)ALB_STEPS.push(v);for(let v=11;v<=30;v++)ALB_STEPS.push(v);
-let albCustom='#efe6d1',albPageColors=['#efe6d1'],albPageImg=null,albPageId=0,albCornersOn=true,albCorner='#c1b082',albCover='#5b3b22',albSec=4,albFlip=1.4,albPer='mix',albColor='custom',albCache=null;
+let albCustom='#efe6d1',albPageColors=['#efe6d1'],albPageImg=null,albPageId=0,albCornersOn=true,albCorner='#c1b082',albCover='#5b3b22',albSec=4,albFlip=1.4,albPer='mix',albPerMax=4,albColor='custom',albCache=null;
 const ALB_COLORS={cream:{page:'#efe6d1',edge:'#d9ccb0',corner:'#2b2520',tint:null},black:{page:'#1f1d1b',edge:'#141312',corner:'#d8d0c0',tint:'#2b2826'},kraft:{page:'#b98d5c',edge:'#9c7447',corner:'#2a1d12',tint:'#c99a66'}};
 function shadeHex(h,f){const n=parseInt(h.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;
   const m=f<0?0:255,a=Math.abs(f);r=Math.round(r+(m-r)*a);g=Math.round(g+(m-g)*a);b=Math.round(b+(m-b)*a);return`rgb(${r},${g},${b})`;}
@@ -984,11 +986,11 @@ let albW=0.72,albH=0.82;
 function albGeom(){const BW=W*albW,BH=H*albH;return{BW,BH,PW:BW/2,x0:(W-BW)/2,y0:(H-BH)/2};}
 function albumData(){
   const palKey=albPageColors.join(',');
-  const key=[W,H,albW,albH,photos.length,albPer,palKey,sizeMul,albCornersOn,albCorner,albPageId,adjVer.Alb].join('|');
+  const key=[W,H,albW,albH,photos.length,albPer,albPerMax,palKey,sizeMul,albCornersOn,albCorner,albPageId,adjVer.Alb].join('|');
   if(albCache&&albCache.key===key)return albCache;
-  // agrupar fotos en caras de página (1–4 o mixto, determinista)
+  // agrupar fotos en caras de página (1–4 o mixto con máx., determinista)
   const groups=[];let i=0,f=0;
-  while(i<photos.length){const r=mulberry(Math.imul(f+1,0x632BE5AB)^SEED);let n;if(albPer==='1'||albPer==='2'||albPer==='3'||albPer==='4')n=+albPer;else{const u=r();n=u<0.12?1:u<0.45?2:u<0.78?3:4;}n=Math.min(n,photos.length-i);groups.push(photos.slice(i,i+n));i+=n;f++;}
+  while(i<photos.length){const r=mulberry(Math.imul(f+1,0x632BE5AB)^SEED);let n;if(albPer==='1'||albPer==='2'||albPer==='3'||albPer==='4')n=+albPer;else{const maxN=Math.max(1,Math.min(4,albPerMax|0));if(maxN===1)n=1;else{const w=[0.12,0.33,0.33,0.22].slice(0,maxN);const sum=w.reduce((a,b)=>a+b,0);const u=r();let t=0,picked=maxN;for(let k=0;k<w.length;k++){t+=w[k]/sum;if(u<t){picked=k+1;break;}}n=picked;}}n=Math.min(n,photos.length-i);groups.push(photos.slice(i,i+n));i+=n;f++;}
   if(groups.length%2)groups.push([]); // cara en blanco si queda impar
   const faces=groups.map((g,n)=>renderFace(g,n));
   const NS=Math.max(1,faces.length/2);
@@ -996,7 +998,7 @@ function albumData(){
 }
 let albPaperC=null;
 function albPaper(w,h,C){const a0=adj.Alb,k=[w,h,C.page,C.tint,albPageId,adjVer.Alb,a0.o,a0.b,!!albPageImg,PAPER.complete].join('|');if(albPaperC&&albPaperC.k===k)return albPaperC.c;
-  // color de página sin adj; adj.Alb solo sobre la imagen de hoja (no pasta ni color ni textura PAPER)
+  // color de página sin adj; adj.Alb solo sobre la imagen de página (no pasta ni color ni textura PAPER)
   const out=document.createElement('canvas');out.width=w;out.height=h;const og=out.getContext('2d');og.fillStyle=C.page;og.fillRect(0,0,w,h);
   if(albPageImg){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d',{willReadFrequently:true});
     g.drawImage(albPageImg,0,0,w,h);if(C.tint){g.globalCompositeOperation='multiply';g.fillStyle=C.tint;g.fillRect(0,0,w,h);g.globalCompositeOperation='source-over';}
@@ -1280,7 +1282,7 @@ $('bgInput').addEventListener('change',e=>{const f=e.target.files[0];if(f){setBg
 const ICON_TRASH='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg>',ICON_UNDO='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>';
 function setBgOffIcon(){const b=$('bgOff'),t=bgOn?'Quitar fondo':'Restaurar fondo';b.innerHTML=bgOn?ICON_TRASH:ICON_UNDO;b.title=t;b.setAttribute('aria-label',t);}
 $('bgOff').onclick=()=>{bgOn=!bgOn;setBgOffIcon();};
-$('mode').onchange=e=>{mode=e.target.value;document.body.className='mode-'+mode;updModal();};
+$('mode').onchange=e=>{mode=e.target.value;document.body.className='mode-'+mode;syncAlbPerMaxUI();updModal();};
 $('filmSpeed').oninput=e=>{const old=filmPxPerSec();filmSpeedV=+e.target.value;if(mode==='film')sceneT=sceneT*old/filmPxPerSec();$('filmSpeedV').textContent=Math.round(filmPxPerSec())+' px/s';updModal();};
 $('filmSpeedV').textContent=Math.round(filmPxPerSec())+' px/s';
 $('filmCrop').onchange=e=>{const old=cycle();filmCrop=e.target.checked;if(mode==='film'&&old>0)sceneT=sceneT*cycle()/old;updModal();};
@@ -1339,9 +1341,9 @@ function setFx(o){document.querySelectorAll('.fx').forEach(el=>{el.value=Math.ro
 window.__seek=t=>{sceneT=t;};window.__t={lib:()=>library,photos:()=>photos,openSort:()=>openSortModal(),closeSort:()=>closeSortModal(),sortDraft:()=>sortDraft&&sortDraft.map(x=>x.e.p.name),sortCols:()=>sortCols,setSortCols:n=>setSortCols(n),cycle:()=>cycle(),render:T=>render(T),resetAlb:()=>{albCache=null;},albGeom:()=>albGeom(),collectPreset:()=>collectPreset(),applyPreset:P=>applyPreset(P),matchPhotos:fs=>matchPhotosFromFiles(fs),refresh:()=>refreshPhotosFolder(),setDirHandle:h=>{photosDirHandle=h;setRefreshUi();},syncFromFiles:fs=>syncLibraryFromFiles(fs)}; // ayuda para pruebas: saltar a un instante
 $('albSec').oninput=e=>{const old=albSec;albSec=ALB_STEPS[+e.target.value];if(mode==='album')sceneT=sceneT*albSec/old;$('albSecV').textContent=albSec;updModal();};
 $('albFlip').oninput=e=>{albFlip=+e.target.value;$('albFlipV').textContent=albFlip+' s';};
-$('albPer').onchange=e=>{albPer=e.target.value;updModal();};
+function syncAlbPerMaxUI(){const on=albPer==='mix';document.body.classList.toggle('show-mix-max',on);const el=$('albPerMax');if(el){el.value=String(Math.max(1,Math.min(4,albPerMax|0)));el.disabled=!on;}}$('albPer').onchange=e=>{albPer=e.target.value;albCache=null;syncAlbPerMaxUI();updModal();};$('albPerMax').onchange=e=>{albPerMax=Math.max(1,Math.min(4,+e.target.value||4));albCache=null;updModal();};syncAlbPerMaxUI();
 $('albPageInput').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
-  const im=new Image();im.onload=()=>{albPageImg=im;albPageId++;albCache=null;$('albPageOff').disabled=false;};im.onerror=()=>console.warn('No se pudo leer la imagen de hoja');im.src=URL.createObjectURL(f);});
+  const im=new Image();im.onload=()=>{albPageImg=im;albPageId++;albCache=null;$('albPageOff').disabled=false;};im.onerror=()=>console.warn('No se pudo leer la imagen de página');im.src=URL.createObjectURL(f);});
 $('albPageOff').onclick=()=>{albPageImg=null;albPageId++;albCache=null;$('albPageOff').disabled=true;};
 $('albCorners').onchange=e=>{albCornersOn=e.target.checked;albCache=null;};
 $('albCornerC').oninput=e=>{albCorner=e.target.value;albCache=null;};
@@ -1436,7 +1438,7 @@ function collectPreset(){
     float:{dur,perScreen,sizeMul},
     film:{speed:filmSpeedV,crop:filmCrop,ori:filmVert?'v':'h',dir:filmDir,size:filmSize,flare},
     table:{spacing:tblS,stack:tblStack},
-    album:{sec:albSec,flip:albFlip,per:albPer,color:albColor,custom:albPageColors[0]||albCustom,pageColors:albPageColors.slice(0,PAL_MAX),corners:albCornersOn,corner:albCorner,cover:albCover,w:albW,h:albH},
+    album:{sec:albSec,flip:albFlip,per:albPer,perMax:albPerMax,color:albColor,custom:albPageColors[0]||albCustom,pageColors:albPageColors.slice(0,PAL_MAX),corners:albCornersOn,corner:albCorner,cover:albCover,w:albW,h:albH},
     photos:library.map(e=>({name:e.p.name,on:!!e.on,size:e.file&&e.file.size||0})), // metadatos opcionales; Aplicar preset no exige las mismas fotos
     hasDefaultMarco:!!(ovImg&&($('ovName').textContent||'').includes('predeterminado')),
     hasBgImage:!!(bgOn&&bgImg),
@@ -1477,7 +1479,7 @@ function applyPreset(P){
     tblStack=P.table.stack??tblStack;$('tblStack').value=tblStack;$('tblStackV').textContent=tblStack;}
   if(P.album){const A=P.album;albSec=A.sec??albSec;const ai=ALB_STEPS.indexOf(albSec);$('albSec').value=ai>=0?ai:6;$('albSecV').textContent=albSec;
     albFlip=A.flip??albFlip;$('albFlip').value=albFlip;$('albFlipV').textContent=albFlip+' s';
-    albPer=['1','2','3','4','mix'].includes(A.per)?A.per:(['1','2','3','4','mix'].includes(albPer)?albPer:'mix');$('albPer').value=albPer;
+    albPer=['1','2','3','4','mix'].includes(A.per)?A.per:(['1','2','3','4','mix'].includes(albPer)?albPer:'mix');$('albPer').value=albPer;albPerMax=A.perMax!=null?Math.max(1,Math.min(4,+A.perMax||4)):albPerMax;if(!Number.isFinite(albPerMax)||albPerMax<1||albPerMax>4)albPerMax=4;if($('albPerMax'))$('albPerMax').value=String(albPerMax);syncAlbPerMaxUI();
     if(A.pageColors&&A.pageColors.length){albPageColors=A.pageColors.map(normHex).slice(0,PAL_MAX);}
     else if(A.color&&ALB_COLORS[A.color]){albPageColors=[ALB_COLORS[A.color].page];}
     else if(A.custom){albPageColors=[normHex(A.custom)];}
@@ -1496,7 +1498,7 @@ function applyPreset(P){
     if(P.export.loops!=null)$('loops').value=Math.max(1,parseInt(P.export.loops)||1);
     if(P.export.qual!=null)$('exportQual').value=String(exportQualLevel(P.export.qual));}
   if(P.ui){if(P.ui.tab)setTab(P.ui.tab);if(P.ui.cols)setCols(+P.ui.cols);}
-  sceneT=0;updModal();
+  sceneT=0;syncAlbPerMaxUI();updModal();
   pendingPreset=P;
   return P;
 }
