@@ -24,7 +24,7 @@ button:disabled{opacity:.5;cursor:default}
 body.mode-float :is(.m-float,.m-film,.m-table,.m-album):not(.m-float),body.mode-film :is(.m-float,.m-film,.m-table,.m-album):not(.m-film),body.mode-table :is(.m-float,.m-film,.m-table,.m-album):not(.m-table),body.mode-album :is(.m-float,.m-film,.m-table,.m-album):not(.m-album){display:none!important}
 #fxPanel{display:none;position:absolute;bottom:calc(100% + 14px);left:50%;transform:translateX(-50%);background:rgba(255,255,255,.97);padding:12px 14px;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.25);min-width:300px}
 #fxPanel.open{display:block}
-#addDirInput,#addFilesInput{display:none}
+#dirInput,#addDirInput,#addFilesInput{display:none}
 #addStack{display:flex;flex-direction:column;gap:10px;margin:4px 0 2px}#addStack .addOpt{display:flex;flex-direction:column;gap:4px}#addStack .addOpt button{width:100%}#addStack .hint{font-size:11px;line-height:1.35;color:#a9a39a;min-height:0}
 #phPanel{display:none;position:fixed;left:316px;top:40px;width:min(640px,calc(100vw - 340px));max-height:calc(100vh - 80px);overflow:auto;z-index:60;background:rgba(24,24,26,.96);color:#ece8e1;border:1px solid rgba(255,255,255,.08);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.5);padding:12px 14px;font:13px system-ui,sans-serif}
 #phPanel.open{display:block}
@@ -40,6 +40,11 @@ body.mode-float :is(.m-float,.m-film,.m-table,.m-album):not(.m-float),body.mode-
 #phSelBar.show{display:flex}
 #phSelBar .muted{flex:1;min-width:80px}
 #phSelDel{background:#8a2c2c!important;border-color:#a33!important;color:#fff!important}
+#bar #phPanel .hd label.phAllChk{display:inline-flex;align-items:center;gap:5px;margin:0;cursor:pointer;font-size:13px;width:auto;max-width:none;justify-content:flex-start}
+#bar #phPanel .hd label.phAllChk input{margin:0;accent-color:#e08c34}
+#phSelHide{background:#2e2e32!important}
+#phSelBar button{white-space:nowrap}
+
 #sortModal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:80;padding:24px}
 #sortModal.open{display:flex}
 #sortModal .sortCard{background:#1a1a1c;color:#ece8e1;border:1px solid rgba(255,255,255,.1);border-radius:14px;box-shadow:0 16px 48px rgba(0,0,0,.55);width:min(1100px,96vw);max-height:min(92vh,900px);display:flex;flex-direction:column;overflow:hidden}
@@ -109,8 +114,9 @@ input[type=file]{display:none}
 :root{--pw:300px}
 #stage{transition:left .3s ease}
 body.panel-open #stage{left:var(--pw)}
-#bar{position:fixed!important;left:0!important;top:0!important;bottom:0!important;transform:none!important;width:var(--pw);box-sizing:border-box;
-  display:block!important;overflow-y:auto;padding:12px 14px 20px!important;border-radius:0 12px 12px 0!important;transition:opacity .3s,transform .3s!important}
+#bar{position:fixed!important;left:0!important;top:0!important;bottom:0!important;height:auto!important;max-height:100vh!important;transform:none!important;width:var(--pw);box-sizing:border-box;
+  display:block!important;overflow:hidden!important;padding:0!important;border-radius:0 12px 12px 0!important;transition:opacity .3s,transform .3s!important}
+#barScroll{display:block;height:100%;max-height:100vh;box-sizing:border-box;overflow-y:scroll!important;overflow-x:hidden!important;overscroll-behavior:contain;padding:12px 14px 28px;-webkit-overflow-scrolling:touch}
 #bar.hide,#bar.collapsed{opacity:0;transform:translateX(-100%)!important;pointer-events:none}
 #bar section{border-top:1px solid rgba(255,255,255,.08);padding:10px 0 6px}
 #bar h3{margin:0 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#e08c34}
@@ -144,25 +150,28 @@ body.panel-open #stage{left:var(--pw)}
 #bar .tab.on::before{background:#2a2a2f;border-color:#46464d;box-shadow:0 -3px 8px rgba(0,0,0,.35)}
 #bar .tab.on::after{content:"";position:absolute;left:1px;right:1px;bottom:0;height:3px;background:#2a2a2f;z-index:-1}
 #bar .tab:first-child{margin-left:0}#bar .tab:last-child{margin-right:0}
-#bar .tabpane.on{background:#2a2a2f;margin:0 -14px;padding:6px 14px 4px}
+#bar .tabpane.on{background:#2a2a2f;margin:0 -14px;padding:6px 14px 14px}
 #bar .tabpane.on>section:first-child{border-top:0}
 #bar label.modeSel{padding-bottom:10px;margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,.08)}
-#bar.tab-fotos .tabpane.on{margin-bottom:-20px;padding-bottom:14px}
-#bar:not(.tab-fotos){display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;align-items:stretch!important;gap:0!important}#bar:not(.tab-fotos)>*{flex:none}
-#bar:not(.tab-fotos) .tabpane.on{flex:1 0 auto;margin-bottom:-20px;padding-bottom:20px}
-#bar .tabpane{display:none}#bar .tabpane.on{display:block}
+#bar .tabpane{display:none}
+#bar .tabpane.on{display:block;flex:none!important;min-height:0;margin-bottom:0;padding-bottom:14px}
 #bar #phPanel{display:block!important;position:static;width:auto;max-height:none;overflow:visible;background:none;border:0;box-shadow:none;padding:0;border-radius:0}
 #bar #phPanel .hd{margin-bottom:8px}#bar #phCount{flex:1;color:#c9c3b9}
-#bar #phGrid{grid-template-columns:repeat(auto-fill,minmax(78px,1fr));grid-auto-rows:max-content;align-content:start;gap:6px;overflow-y:auto;padding-right:4px}
-#bar.tab-fotos{display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;align-items:stretch!important;gap:0!important;overflow:hidden!important}
-#bar.tab-fotos>*{flex:none}
-#bar.tab-fotos .tabpane.on{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
-#bar.tab-fotos .tabpane.on>section{flex:none}
-#bar.tab-fotos #phSec{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding-bottom:0}
-#bar.tab-fotos #phPanel{flex:1 1 auto;min-height:0;display:flex!important;flex-direction:column}
-#bar.tab-fotos #phGrid{flex:1 1 auto;min-height:60px}
-#bar.tab-fotos #phPanel .hd,#bar.tab-fotos #phWarn{flex:none}
+#bar #phGrid{grid-template-columns:repeat(auto-fill,minmax(78px,1fr));grid-auto-rows:max-content;align-content:start;gap:6px;overflow:visible;padding-right:4px}
+/* Slideshow: #barScroll is the only scrollport. No sticky Play/Pausa. */
+#bar .tabpane.on>section{flex:none}
+#bar #phSec,#bar #phPanel{flex:none;min-height:0}
+#bar #phGrid{flex:none;overflow:visible;min-height:0}
+#bar #phPanel .hd,#bar #phWarn,#bar #phSelBar{flex:none}
 #bar #phWarn:empty{display:none}
+/* Fotos: #phSec ~viewport tall so #barScroll can still reach Play/Agregar above;
+   within gallery, .hd (+/−) and #phSelBar stay put; only #phGrid scrolls. */
+#bar.tab-fotos #phSec{display:flex;flex-direction:column;height:calc(100vh - 12px);min-height:calc(100vh - 12px);max-height:calc(100vh - 12px);box-sizing:border-box;overflow:hidden;padding-bottom:0}
+#bar.tab-fotos #phPanel{display:flex!important;flex-direction:column;flex:1 1 auto!important;min-height:0;height:100%;max-height:100%;overflow:hidden!important}
+#bar.tab-fotos #phPanel .hd,#bar.tab-fotos #phSelBar,#bar.tab-fotos #phWarn{flex:0 0 auto}
+#bar.tab-fotos #phPanel .hd{background:#2a2a2f;padding-bottom:6px;z-index:1}
+#bar.tab-fotos #phSelBar{background:#2a2a2f;padding-bottom:4px;z-index:1}
+#bar.tab-fotos #phGrid{flex:1 1 auto!important;min-height:80px;overflow-y:auto!important;overflow-x:hidden!important;align-content:start}
 *{scrollbar-width:thin;scrollbar-color:#3a3a40 #000}
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-track{background:#000}
@@ -194,12 +203,12 @@ body.panel-open #stage{left:var(--pw)}
 #panelTab.hide{opacity:0;pointer-events:none}
 body.panel-open #panelTab{opacity:0;pointer-events:none}
 #bar #fxPanel{display:block!important;position:static!important;transform:none!important;min-width:0;max-height:0;overflow:hidden;opacity:0;padding:0 10px!important;margin:0;border-radius:9px;background:#1f1f23!important;border:0 solid transparent;box-shadow:none!important;backdrop-filter:none;transition:max-height .35s ease,opacity .25s ease,padding .35s ease,margin .35s ease,border-color .35s}
-#bar #fxPanel.open{max-height:420px;opacity:1;padding:6px 10px 10px!important;margin:8px 0 2px;border:1px solid #34343a}
+#bar #fxPanel.open{max-height:none;overflow:visible;opacity:1;padding:6px 10px 10px!important;margin:8px 0 2px;border:1px solid #34343a}
 #bar #fxPanel label{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr) 7ch!important;white-space:normal!important;line-height:1.2;gap:6px;margin:6px 0;font-size:13px}
 #bar #fxPanel input{width:100%!important}
 #bar #fxPanel div:last-child{display:flex;gap:6px;justify-content:flex-end;margin-top:6px}
 #bar .adjp{max-height:0;overflow:hidden;opacity:0;padding:0 10px;margin:0;border-radius:9px;background:#1f1f23;border:0 solid transparent;transition:max-height .35s ease,opacity .25s ease,padding .35s ease,margin .35s ease}
-#bar .adjp.open{max-height:360px;opacity:1;padding:6px 10px 10px;margin:8px 0 2px;border:1px solid #34343a}
+#bar .adjp.open{max-height:none;overflow:visible;opacity:1;padding:6px 10px 10px;margin:8px 0 2px;border:1px solid #34343a}
 #bar .adjp label{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr) 9ch!important;white-space:normal!important;line-height:1.2;margin:6px 0}
 #bar .adjp label:has(>select){grid-template-columns:minmax(0,1fr)!important;gap:4px}
 #bar .adjp .val .vi{width:4ch}
@@ -227,12 +236,13 @@ body.panel-open #panelTab{opacity:0;pointer-events:none}
 <input type="file" id="bgInput" accept="image/*">
 <input type="file" id="ovInput" accept="image/png,image/webp,image/*" style="display:none">
 <input type="file" id="albPageInput" accept="image/*">
-<input type="file" id="dirInput" webkitdirectory directory multiple accept="image/*">
-<input type="file" id="addDirInput" webkitdirectory directory multiple accept="image/*">
+<input type="file" id="dirInput" webkitdirectory directory multiple>
+<input type="file" id="addDirInput" webkitdirectory directory multiple>
 <input type="file" id="addFilesInput" multiple accept="image/*">
 
 <button id="panelTab" title="Mostrar/ocultar controles" aria-label="Mostrar u ocultar controles"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 <div id="bar" class="hide">
+<div id="barScroll">
   <div class="phead"><b>Controles</b><button id="panelFold" class="icon" title="Plegar panel" aria-label="Plegar panel"><svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button></div>
   <div class="transport" role="group" aria-label="Reproducción"><button id="playOn" title="Reproducir (Espacio)" aria-label="Reproducir"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg> Play</button><button id="playOff" title="Pausar (Espacio)" aria-label="Pausar"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg> Pausa</button><span id="playBtn" hidden></span></div>
   <div class="tabs" role="tablist"><button class="tab" role="tab" data-tab="fotos">Fotos</button><button class="tab" role="tab" data-tab="slideshow">Slideshow</button></div>
@@ -246,7 +256,7 @@ body.panel-open #panelTab{opacity:0;pointer-events:none}
     <span id="phBtn" hidden></span>
     <span id="count" class="muted"></span>
   </section>
-  <section id="phSec"><div id="phPanel" class="open" aria-label="Lista de fotos"><div class="hd"><span id="phCount"></span><button id="phAll">Todas</button><button id="phNone">Ninguna</button><button type="button" id="sortBtn" class="m-album m-film" title="Reordenar fotos del álbum y del film">Ordenar fotos</button><span class="zoom"><button id="phLess" title="Miniaturas más grandes" aria-label="Miniaturas más grandes">+</button><button id="phMore" title="Miniaturas más pequeñas" aria-label="Miniaturas más pequeñas">−</button></span></div><div id="phSelBar"><span id="phSelCount" class="muted">0 seleccionadas</span><button id="phSelClear">Quitar selección</button><button id="phSelDel">Borrar seleccionadas</button></div><div id="phConfirm" role="alertdialog"><span id="phConfMsg">¿Quitar esta foto de la galería?</span><b id="phConfName"></b><div><button id="phConfCancel">Cancelar</button><button id="phConfOk" class="danger">Quitar</button></div></div><div id="phGrid"></div><div id="phWarn"></div></div></section>
+  <section id="phSec"><div id="phPanel" class="open" aria-label="Lista de fotos"><div class="hd"><span id="phCount"></span><label class="chk phAllChk" title="Marcado: seleccionar todas. Desmarcado: ninguna."><input type="checkbox" id="phAll"> Todas</label><button type="button" id="sortBtn" class="m-album m-film" title="Reordenar fotos del álbum y del film">Ordenar fotos</button><span class="zoom"><button id="phLess" title="Miniaturas más grandes" aria-label="Miniaturas más grandes">+</button><button id="phMore" title="Miniaturas más pequeñas" aria-label="Miniaturas más pequeñas">−</button></span></div><div id="phSelBar"><span id="phSelCount" class="muted">0 seleccionadas</span><button type="button" id="phSelHide">Ocultar</button><button type="button" id="phSelDel">Borrar</button></div><div id="phConfirm" role="alertdialog"><span id="phConfMsg">¿Quitar esta foto de la galería?</span><b id="phConfName"></b><div><button id="phConfCancel">Cancelar</button><button id="phConfOk" class="danger">Quitar</button></div></div><div id="phGrid"></div><div id="phWarn"></div></div></section>
   </div><div class="tabpane" data-pane="slideshow">
   <section><h3>Animación</h3>
     <label class="modeSel">Animación <select id="mode"><option value="float">Fotos flotantes</option><option value="film">Film de película</option><option value="table">Mesa de fotos</option><option value="album">Álbum</option></select></label>
@@ -306,7 +316,7 @@ body.panel-open #panelTab{opacity:0;pointer-events:none}
     <button id="exportBtn" class="primary"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18v14H3z"/><path d="M7 5v14M17 5v14M3 9h4M3 15h4M17 9h4M17 15h4M9 8h6v8H9z"/></svg> Exportar video</button>
   </section>
   </div>
-</div>
+</div><!--/barScroll--></div>
 
 <div id="sortModal" role="dialog" aria-modal="true" aria-label="Ordenar fotos">
   <div class="sortCard">
@@ -432,11 +442,18 @@ function setRefreshUi(){
 }
 async function filesFromDirHandle(dir){
   const files=[];
-  for await(const [name,h] of dir.entries()){
-    if(h.kind!=='file')continue;
-    if(!EXT.test(name)||name.startsWith('.'))continue;
-    try{files.push(await h.getFile());}catch(e){console.warn(e);}
+  async function walk(d){
+    for await(const [name,h] of d.entries()){
+      if(name.startsWith('.'))continue;
+      try{
+        if(h.kind==='directory'){await walk(h);continue;}
+        if(h.kind!=='file')continue;
+        if(!EXT.test(name))continue;
+        files.push(await h.getFile());
+      }catch(e){console.warn(e);}
+    }
   }
+  await walk(dir);
   files.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'}));
   return files;
 }
@@ -445,13 +462,22 @@ async function pickPhotosFolder(append){
     try{
       const dir=await showDirectoryPicker();
       const files=await filesFromDirHandle(dir);
+      if(!files.length){
+        flashWarn('No se encontraron imágenes en esa carpeta.');
+        const lm=$('loadMsg');if(lm)lm.textContent='No se encontraron imágenes en esa carpeta.';
+        return;
+      }
       if(!append){photosDirHandle=dir;setRefreshUi();
         if(library.length)await loadFilesKeepSettings(files); else await loadFiles(files,false);
       }else{if(!photosDirHandle)photosDirHandle=dir;setRefreshUi();await loadFiles(files,true);}
       return;
-    }catch(e){if(e&&e.name==='AbortError')return;console.warn(e);}
+    }catch(e){
+      if(e&&e.name==='AbortError')return;
+      console.warn(e);
+      flashWarn('No se pudo usar el selector moderno; abriendo el clásico…');
+    }
   }
-  // Safari / sin File System Access: input de carpeta (no se puede reescanear después)
+  // Safari / file:// / sin File System Access: input de carpeta
   if(!append){photosDirHandle=null;setRefreshUi();$('dirInput').click();}
   else $('addDirInput').click();
 }
@@ -530,15 +556,29 @@ async function loadFiles(files,append){
   if(!append)clearPhSelection();
   files=[...files].filter(f=>EXT.test(f.name)||/^image\//.test(f.type)).filter(f=>!f.name.startsWith('.'));
   files.sort((a,b)=>(a.webkitRelativePath||a.name).localeCompare(b.webkitRelativePath||b.name,undefined,{numeric:true,sensitivity:'base'}));
+  if(!files.length){
+    flashWarn('No se encontraron imágenes en esa carpeta.');
+    const lm=$('loadMsg');if(lm)lm.textContent='No se encontraron imágenes en esa carpeta.';
+    return;
+  }
   if(append){const have=new Set(library.map(e=>e.key));files=files.filter(f=>{const k=libKey(f);if(have.has(k))return false;have.add(k);return true;});if(!files.length){flashWarn('Esas fotos ya estaban en la lista.');return;}}
-  if(!files.length){$('loadMsg').textContent='No se encontraron imágenes en esa carpeta.';return;}
   const out=[];
   for(let i=0;i<files.length;i++){
-    $('loadMsg').textContent=`Cargando ${i+1} de ${files.length}…`;
+    const msg=`Cargando ${i+1} de ${files.length}…`;
+    const lm=$('loadMsg');if(lm)lm.textContent=msg;
     try{const p=await decode(files[i]);out.push({key:libKey(files[i]),file:files[i],p,on:true,thumb:thumbOf(p)});}catch(e){console.warn('No se pudo leer',files[i].name,e);}
   }
-  if(!out.length){$('loadMsg').textContent='No se pudo leer ninguna imagen.';return;}
-  if(append){library=library.concat(out);rebuildActive();renderPh();setRefreshUi();return;}
+  if(!out.length){
+    flashWarn('No se pudo leer ninguna imagen.');
+    const lm=$('loadMsg');if(lm)lm.textContent='No se pudo leer ninguna imagen.';
+    return;
+  }
+  if(append){
+    library=library.concat(out);rebuildActive();renderPh();setRefreshUi();
+    flashWarn('Agregadas '+out.length+' foto'+(out.length===1?'':'s')+' ('+library.length+' en total).');
+    if($('start')&&$('start').style.display!=='none'){$('start').style.display='none';syncPlay();showBar();}
+    return;
+  }
   library.forEach(e=>e.p.img.close&&e.p.img.close());
   library=out;rebuildActive();sceneT=0;renderPh();
   $('start').style.display='none';
@@ -566,20 +606,80 @@ function rebuildActive(){photos=library.filter(e=>e.on).map(e=>e.p);permCache.cl
 let phPending=null; // entry or {batch:entries[]}
 let phSelected=new Set(); // library indices
 let phLastClicked=-1;
+function syncPhAllCb(){
+  const cb=$('phAll');if(!cb)return;
+  const n=library.length,s=phSelected.size;
+  cb.indeterminate=s>0&&s<n;
+  cb.checked=n>0&&s===n;
+}
 function updateSelBar(){
-  const n=phSelected.size, bar=$('phSelBar'), cnt=$('phSelCount');
+  const n=phSelected.size, bar=$('phSelBar'), cnt=$('phSelCount'), hide=$('phSelHide');
   if(!bar)return;
   bar.classList.toggle('show',n>0);
   cnt.textContent=n===1?'1 seleccionada':n+' seleccionadas';
+  if(hide&&n>0){
+    const entries=[...phSelected].map(i=>library[i]).filter(Boolean);
+    const anyOn=entries.some(e=>e.on);
+    hide.textContent=anyOn?'Ocultar':'Mostrar';
+    hide.title=anyOn?'Excluir del slideshow (siguen en la galería)':'Volver a incluir en el slideshow';
+  }
+  syncPhAllCb();
 }
 function clearPhSelection(){
   phSelected.clear();phLastClicked=-1;
-  document.querySelectorAll('#phGrid .th.sel').forEach(el=>el.classList.remove('sel'));
+  document.querySelectorAll('#phGrid .th').forEach(el=>{
+    el.classList.remove('sel');
+    const c=el.querySelector('input[type=checkbox]');if(c){c.checked=false;c.indeterminate=false;}
+  });
   updateSelBar();
 }
 function setThumbSel(d,i,on){
   if(on)phSelected.add(i);else phSelected.delete(i);
   d.classList.toggle('sel',on);
+  const c=d.querySelector('input[type=checkbox]');if(c){c.checked=!!on;c.indeterminate=false;}
+}
+function selectAllThumbs(on){
+  const g=$('phGrid');
+  if(!on){clearPhSelection();return;}
+  phSelected.clear();
+  library.forEach((_,i)=>{
+    phSelected.add(i);
+    const th=g&&g.children[i];
+    if(th){th.classList.add('sel');const c=th.querySelector('input[type=checkbox]');if(c){c.checked=true;c.indeterminate=false;}}
+  });
+  phLastClicked=library.length?library.length-1:-1;
+  updateSelBar();
+}
+function hideSelected(){
+  const entries=[...phSelected].sort((a,b)=>a-b).map(i=>library[i]).filter(Boolean);
+  if(!entries.length)return;
+  const anyOn=entries.some(e=>e.on);
+  if(anyOn){
+    // Ocultar: exclude selected, keep ≥1 active
+    const wouldRemain=library.filter(x=>x.on&&!entries.includes(x)).length;
+    if(wouldRemain<1){
+      // leave one of the selected on
+      let kept=false;
+      entries.forEach(e=>{
+        if(!kept&&e.on){kept=true;return;}
+        e.on=false;
+      });
+      flashWarn('Se deja al menos una foto activa.');
+    }else{
+      entries.forEach(e=>{e.on=false;});
+    }
+  }else{
+    // Mostrar: re-include all selected
+    entries.forEach(e=>{e.on=true;});
+  }
+  rebuildActive();
+  // refresh off class without wiping selection
+  const g=$('phGrid');
+  library.forEach((e,i)=>{
+    const th=g&&g.children[i];
+    if(th)th.classList.toggle('off',!e.on);
+  });
+  updateSelBar();
 }
 function placeConfirm(btn){
   const c=$('phConfirm');c.classList.add('open');
@@ -627,40 +727,28 @@ function renderPh(){
   library.forEach((e,i)=>{
     const d=document.createElement('div');d.className='th'+(e.on?'':' off')+(phSelected.has(i)?' sel':'');
     d.dataset.i=String(i);
-    d.innerHTML=`<img alt=""><input type="checkbox" aria-label="Usar foto"><button class="rm" title="Quitar de la lista" aria-label="Quitar de la lista"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg></button><div class="nm"></div>`;
-    d.querySelector('img').src=e.thumb;d.querySelector('.nm').textContent=e.p.name;const cb=d.querySelector('input');cb.checked=e.on;
-    const set=v=>{if(!v&&library.filter(x=>x.on).length<=1){cb.checked=true;flashWarn('Tiene que quedar al menos una foto activa.');return;}e.on=v;cb.checked=v;d.classList.toggle('off',!v);rebuildActive();};
-    cb.onchange=()=>set(cb.checked);
-    d.querySelector('img').onclick=ev=>{
-      if(ev.shiftKey||ev.metaKey||ev.ctrlKey){
-        ev.preventDefault();
-        if(ev.shiftKey&&phLastClicked>=0){
-          const a=Math.min(phLastClicked,i),b=Math.max(phLastClicked,i);
-          for(let j=a;j<=b;j++){const th=g.children[j];if(th)setThumbSel(th,j,true);}
-        }else{
-          setThumbSel(d,i,!phSelected.has(i));
-          phLastClicked=i;
-        }
-        updateSelBar();
-        return;
+    d.innerHTML=`<img alt=""><input type="checkbox" aria-label="Seleccionar foto"><button class="rm" title="Quitar de la lista" aria-label="Quitar de la lista"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg></button><div class="nm"></div>`;
+    d.querySelector('img').src=e.thumb;d.querySelector('.nm').textContent=e.p.name;const cb=d.querySelector('input');cb.checked=phSelected.has(i);
+    const applyRangeOrToggle=(ev)=>{
+      if(ev.shiftKey&&phLastClicked>=0){
+        const a=Math.min(phLastClicked,i),b=Math.max(phLastClicked,i);
+        for(let j=a;j<=b;j++){const th=g.children[j];if(th)setThumbSel(th,j,true);}
+      }else{
+        setThumbSel(d,i,!phSelected.has(i));
+        phLastClicked=i;
       }
-      set(!e.on);
-      phLastClicked=i;
+      updateSelBar();
+    };
+    cb.onchange=()=>{setThumbSel(d,i,cb.checked);phLastClicked=i;updateSelBar();};
+    cb.onclick=ev=>{if(ev.shiftKey){ev.preventDefault();applyRangeOrToggle(ev);}};
+    d.querySelector('img').onclick=ev=>{
+      ev.preventDefault();
+      applyRangeOrToggle(ev);
     };
     d.onclick=ev=>{
       if(ev.target.closest('input,button.rm'))return;
-      if(ev.target.tagName==='IMG')return; // handled above
-      if(ev.shiftKey||ev.metaKey||ev.ctrlKey){
-        ev.preventDefault();
-        if(ev.shiftKey&&phLastClicked>=0){
-          const a=Math.min(phLastClicked,i),b=Math.max(phLastClicked,i);
-          for(let j=a;j<=b;j++){const th=g.children[j];if(th)setThumbSel(th,j,true);}
-        }else{
-          setThumbSel(d,i,!phSelected.has(i));
-          phLastClicked=i;
-        }
-        updateSelBar();
-      }
+      if(ev.target.tagName==='IMG')return;
+      applyRangeOrToggle(ev);
     };
     d.querySelector('.rm').onclick=ev=>{
       ev.stopPropagation();
@@ -691,7 +779,7 @@ async function decode(file){
   return{img,w:tw,h:th,name:file.name};
 }
 $('dirInput').addEventListener('change',e=>{if(e.target.files.length){photosDirHandle=null;const keep=refreshPick||library.length>0;refreshPick=false;setRefreshUi();if(keep)loadFilesKeepSettings(e.target.files);else loadFiles(e.target.files);}e.target.value='';});
-['addDirInput','addFilesInput'].forEach(id=>$(id).addEventListener('change',e=>{if(e.target.files.length)loadFiles(e.target.files,true);e.target.value='';}));
+['addDirInput','addFilesInput'].forEach(id=>$(id).addEventListener('change',e=>{const fs=e.target.files;if(fs&&fs.length)loadFiles(fs,true);else flashWarn('No se eligieron archivos.');e.target.value='';}));
 $('addFilesBtn').onclick=()=>$('addFilesInput').click();
 $('addDirBtn').onclick=()=>pickPhotosFolder(true);
 $('startFolderBtn').onclick=()=>pickPhotosFolder(false);
@@ -754,15 +842,18 @@ $('sortApply').onclick=applySortOrder;
 $('sortZoomIn').onclick=()=>setSortCols(sortCols-1);
 $('sortZoomOut').onclick=()=>setSortCols(sortCols+1);
 $('phConfOk').onclick=doRemove;$('phConfCancel').onclick=cancelRemove;
-$('phSelClear').onclick=()=>{clearPhSelection();};
+$('phSelHide').onclick=()=>hideSelected();
 $('phSelDel').onclick=ev=>{
   const entries=[...phSelected].sort((a,b)=>a-b).map(i=>library[i]).filter(Boolean);
   if(!entries.length)return;
   if(!canRemoveEntries(entries)){flashWarn('Tiene que quedar al menos una foto activa.');return;}
   askRemoveBatch(entries,ev.currentTarget);
 };
-$('phAll').onclick=()=>{library.forEach(e=>e.on=true);rebuildActive();renderPh();};
-$('phNone').onclick=()=>{library.forEach((e,i)=>e.on=i===0);rebuildActive();renderPh();flashWarn('Se deja una foto activa (no puede quedar ninguna).');};
+$('phAll').onchange=()=>{
+  const cb=$('phAll');
+  // indeterminate click in some browsers clears to unchecked first; treat checked=select all
+  selectAllThumbs(!!cb.checked);
+};
 
 // ---------- parámetros deterministas por aparición global ----------
 const DIRS=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]];
