@@ -334,6 +334,7 @@ body.panel-open #panelTab{opacity:0;pointer-events:none}
     <label class="chk"><input type="checkbox" id="albCorners" checked> Esquinas</label>
     <label title="Color de las esquinas">Color de esquina <input type="color" id="albCornerC" value="#c1b082"></label>
     <label title="Color de la pasta del álbum">Color de pasta <input type="color" id="albCoverC" value="#5b3b22"></label>
+    <label title="Grosor del borde de la pasta del álbum"><span class="slbl">Grosor de pasta</span><input type="range" id="albCoverThickR" min="5" max="26" step="1" value="13"><span id="albCoverThickV">13 px</span></label>
   </section>
   <section data-sec="escala"><h3>Escala</h3>
     <label class="m-float m-table"><span class="slbl">Tamaño</span><input type="range" id="sizeR" min="50" max="160" step="5" value="100"><span id="sizeV">100%</span></label>
@@ -966,7 +967,7 @@ function drawPhoto(p,pr,t){ // t en [0,1]
 }
 // ---------- modo álbum (page flip) ----------
 const ALB_STEPS=[];for(let v=1;v<=10;v+=0.5)ALB_STEPS.push(v);for(let v=11;v<=30;v++)ALB_STEPS.push(v);
-let albCustom='#efe6d1',albPageColors=['#efe6d1'],albPageImg=null,albPageId=0,albCornersOn=true,albCorner='#c1b082',albCover='#5b3b22',albSec=4,albFlip=1.4,albPer='mix',albPerMax=4,albColor='custom',albCache=null;
+let albCustom='#efe6d1',albPageColors=['#efe6d1'],albPageImg=null,albPageId=0,albCornersOn=true,albCorner='#c1b082',albCover='#5b3b22',albCoverThick=13,albSec=4,albFlip=1.4,albPer='mix',albPerMax=4,albColor='custom',albCache=null;
 const ALB_COLORS={cream:{page:'#efe6d1',edge:'#d9ccb0',corner:'#2b2520',tint:null},black:{page:'#1f1d1b',edge:'#141312',corner:'#d8d0c0',tint:'#2b2826'},kraft:{page:'#b98d5c',edge:'#9c7447',corner:'#2a1d12',tint:'#c99a66'}};
 function shadeHex(h,f){const n=parseInt(h.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;
   const m=f<0?0:255,a=Math.abs(f);r=Math.round(r+(m-r)*a);g=Math.round(g+(m-g)*a);b=Math.round(b+(m-b)*a);return`rgb(${r},${g},${b})`;}
@@ -1062,12 +1063,13 @@ function renderAlbumBook(T){const albCover=albCoverRaw();
   const A=albumData(),{BW,BH,PW,x0,y0}=albGeom(),C=albPal(0),F=A.faces,NS=A.NS,P=albSec,D=Math.min(albFlip,P*0.9);
   const k=Math.floor(T/P),u=T-k*P,s=((k%NS)+NS)%NS,s2=(s+1)%NS,q=u>P-D?(u-(P-D))/D:-1;
   const sx=x0+PW; // lomo
-  // libro: tapas y sombra
+  // libro: tapas y sombra (grosor de pasta = albCoverThick; default 13 ≈ look actual)
+  const t=Math.max(5,Math.min(26,albCoverThick|0)),fx=t+1,fy=t-1,ox=t,oy=t-2,hi=Math.max(2,t-3),hy=Math.max(1,hi-2);
   ctx.save();ctx.shadowColor=shadeHex(albCover,-0.75).replace('rgb(','rgba(').replace(')',',0.5)');ctx.shadowBlur=50;ctx.shadowOffsetY=24;
-  const cg=ctx.createLinearGradient(0,y0-12,0,y0+BH+12);cg.addColorStop(0,shadeHex(albCover,0.10));cg.addColorStop(0.5,albCover);cg.addColorStop(1,shadeHex(albCover,-0.18));
-  ctx.fillStyle=cg;ctx.fillRect(x0-14,y0-12,BW+28,BH+24);ctx.restore();
-  ctx.strokeStyle=shadeHex(albCover,-0.35);ctx.lineWidth=2;ctx.strokeRect(x0-13,y0-11,BW+26,BH+22); // canto de la pasta
-  ctx.strokeStyle=shadeHex(albCover,0.18);ctx.lineWidth=1;ctx.strokeRect(x0-10,y0-8,BW+20,BH+16);
+  const cg=ctx.createLinearGradient(0,y0-fy,0,y0+BH+fy);cg.addColorStop(0,shadeHex(albCover,0.10));cg.addColorStop(0.5,albCover);cg.addColorStop(1,shadeHex(albCover,-0.18));
+  ctx.fillStyle=cg;ctx.fillRect(x0-fx,y0-fy,BW+2*fx,BH+2*fy);ctx.restore();
+  ctx.strokeStyle=shadeHex(albCover,-0.35);ctx.lineWidth=2;ctx.strokeRect(x0-ox,y0-oy,BW+2*ox,BH+2*oy); // canto de la pasta
+  ctx.strokeStyle=shadeHex(albCover,0.18);ctx.lineWidth=1;ctx.strokeRect(x0-hi,y0-hy,BW+2*hi,BH+2*hy);
   ctx.fillStyle=C.edge;ctx.fillRect(x0-4,y0-3,BW+8,BH+6); // canto de hojas
   const flipping=q>=0,qq=flipping?(1-Math.cos(Math.PI*q))/2:0; // suavizado
   ctx.drawImage(F[2*s],x0,y0,PW,BH); // izquierda actual
@@ -1348,7 +1350,7 @@ $('albPageOff').onclick=()=>{albPageImg=null;albPageId++;albCache=null;$('albPag
 $('albCorners').onchange=e=>{albCornersOn=e.target.checked;albCache=null;};
 $('albCornerC').oninput=e=>{albCorner=e.target.value;albCache=null;};
 $('bgColor').oninput=e=>{BG=e.target.value;};
-$('albCoverC').oninput=e=>{albCover=e.target.value;};function albCoverRaw(){return albCover;}
+$('albCoverC').oninput=e=>{albCover=e.target.value;};$('albCoverThickR').oninput=e=>{albCoverThick=+e.target.value;$('albCoverThickV').textContent=albCoverThick+' px';};function albCoverRaw(){return albCover;}
 $('albCustomC').oninput=e=>{albPageColors=[normHex(e.target.value)];onAlbPagePalChange();renderPal('albPagePal',albPageColors,onAlbPagePalChange);};
 $('albColor').onchange=e=>{const v=e.target.value;if(ALB_COLORS[v]){albPageColors=[ALB_COLORS[v].page];onAlbPagePalChange();renderPal('albPagePal',albPageColors,onAlbPagePalChange);}else{albColor='custom';};};
 $('tblSpacing').oninput=e=>{const old=tblS;tblS=TBL_STEPS[+e.target.value];if(mode==='table')sceneT=sceneT*tblS/old;$('tblSpacingV').textContent=tblS;updModal();};
@@ -1438,7 +1440,7 @@ function collectPreset(){
     float:{dur,perScreen,sizeMul},
     film:{speed:filmSpeedV,crop:filmCrop,ori:filmVert?'v':'h',dir:filmDir,size:filmSize,flare},
     table:{spacing:tblS,stack:tblStack},
-    album:{sec:albSec,flip:albFlip,per:albPer,perMax:albPerMax,color:albColor,custom:albPageColors[0]||albCustom,pageColors:albPageColors.slice(0,PAL_MAX),corners:albCornersOn,corner:albCorner,cover:albCover,w:albW,h:albH},
+    album:{sec:albSec,flip:albFlip,per:albPer,perMax:albPerMax,color:albColor,custom:albPageColors[0]||albCustom,pageColors:albPageColors.slice(0,PAL_MAX),corners:albCornersOn,corner:albCorner,cover:albCover,coverThick:albCoverThick,w:albW,h:albH},
     photos:library.map(e=>({name:e.p.name,on:!!e.on,size:e.file&&e.file.size||0})), // metadatos opcionales; Aplicar preset no exige las mismas fotos
     hasDefaultMarco:!!(ovImg&&($('ovName').textContent||'').includes('predeterminado')),
     hasBgImage:!!(bgOn&&bgImg),
@@ -1486,7 +1488,7 @@ function applyPreset(P){
     else if(A.color==='custom'&&A.custom){albPageColors=[normHex(A.custom)];}
     syncAlbColorAlias();renderPal('albPagePal',albPageColors,onAlbPagePalChange);
     albCornersOn=A.corners!==false;$('albCorners').checked=albCornersOn;
-    if(A.corner){albCorner=A.corner;$('albCornerC').value=albCorner;}if(A.cover){albCover=A.cover;$('albCoverC').value=albCover;}
+    if(A.corner){albCorner=A.corner;$('albCornerC').value=albCorner;}if(A.cover){albCover=A.cover;$('albCoverC').value=albCover;}if(A.coverThick!=null){albCoverThick=Math.max(5,Math.min(26,+A.coverThick||13));$('albCoverThickR').value=albCoverThick;$('albCoverThickV').textContent=albCoverThick+' px';}
     if(A.w!=null&&A.h!=null)setAlb(Math.round(A.w*100),Math.round(A.h*100));albCache=null;}
   if(P.effect!=null){effect=P.effect;$('effect').value=effect;$('fxBtn').disabled=!EFFECTS[effect].panel;}
   if(P.fx)setFx(P.fx);
